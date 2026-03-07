@@ -81,7 +81,7 @@
         .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; text-align: left; }
         .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); text-align: center; width: 100%; }
 
-        /* STORICO MESI - LAYOUT PULITO */
+        /* STORICO MESI */
         .storico-mesi-container { width: 100%; }
         .mese-row { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -89,11 +89,6 @@
         }
         .mese-nome { font-weight: 600; font-size: 15px; color: #3a3a3c; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 15px; white-space: nowrap; }
-
-        /* GRAFICI E TABELLA */
-        .grafici-container { display: none; margin-top: 25px; gap: 20px; }
-        @media (min-width: 1024px) { .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; } }
-        .chart-box { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
 
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
@@ -153,12 +148,11 @@
                         <div id="spesaPerMeseLista" class="storico-mesi-container"></div>
                     </div>
                 </div>
-                
-                <button id="btnToggleGrafici" style="margin-top:20px; background: var(--secondary);" onclick="toggleGrafici()">📊 Mostra Statistiche</button>
-                
-                <div class="grafici-container" id="graficiContainer">
-                    <div class="chart-box"><canvas id="chartCategorie"></canvas></div>
-                    <div class="chart-box"><canvas id="chartMesi"></canvas></div>
+                <div class="card" id="graficiCard" style="display:none; margin-top:20px; padding:10px;">
+                   <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <canvas id="chartCategorie"></canvas>
+                        <canvas id="chartMesi"></canvas>
+                   </div>
                 </div>
             </div>
 
@@ -179,7 +173,6 @@
     <script>
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        let chart1, chart2;
 
         function formattaEuro(n) { return parseFloat(n).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; }
 
@@ -221,29 +214,61 @@
                         </button>
                     </td>
                 </tr>`).join('');
-            
-            if(window.innerWidth >= 1024 || document.getElementById('graficiContainer').style.display === 'grid') disegnaGrafici();
         }
 
+        // MOTORE DI IMPORTAZIONE UNIVERSALE (FIX IPHONE)
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                const rows = event.target.result.split('\n');
-                rows.forEach((row, i) => {
-                    if(i === 0) return;
-                    const cols = row.split(/[;,]/);
-                    if(cols.length >= 4) {
-                        const dParts = cols[0].split('/');
-                        const dataMs = new Date(dParts[2], dParts[1]-1, dParts[0]).getTime();
-                        const imp = parseFloat(cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.'));
-                        if(!isNaN(dataMs) && !isNaN(imp)) spese.push({ data: dataMs, descrizione: cols[1], categoria: cols[2], importo: imp });
+                const content = event.target.result;
+                const lines = content.split(/\r?\n/);
+                let imported = 0;
+
+                lines.forEach((line, index) => {
+                    if (index === 0 || line.trim() === "") return; // Salta intestazione e righe vuote
+
+                    // Prova a capire se usa virgola o punto e virgola
+                    const delimiter = line.includes(';') ? ';' : ',';
+                    const cols = line.split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
+
+                    if (cols.length >= 4) {
+                        // Gestione Data
+                        const dateStr = cols[0];
+                        const dateParts = dateStr.split('/');
+                        if (dateParts.length === 3) {
+                            let day = parseInt(dateParts[0]);
+                            let month = parseInt(dateParts[1]) - 1;
+                            let year = parseInt(dateParts[2]);
+                            if (year < 100) year += 2000;
+                            const d = new Date(year, month, day);
+
+                            // Gestione Importo (pulisce € e converte virgola in punto)
+                            let rawImp = cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.');
+                            const imp = parseFloat(rawImp);
+
+                            if (!isNaN(d.getTime()) && !isNaN(imp)) {
+                                spese.push({
+                                    data: d.getTime(),
+                                    descrizione: cols[1],
+                                    categoria: cols[2] || "Altro",
+                                    importo: imp
+                                });
+                                imported++;
+                            }
+                        }
                     }
                 });
-                spese.sort((a,b) => b.data - a.data);
-                localStorage.setItem('speseData', JSON.stringify(spese));
-                aggiornaUI();
+
+                if (imported > 0) {
+                    spese.sort((a,b) => b.data - a.data);
+                    localStorage.setItem('speseData', JSON.stringify(spese));
+                    aggiornaUI();
+                    alert("Importate " + imported + " spese con successo!");
+                } else {
+                    alert("Non ho trovato dati validi. Controlla che il file CSV sia corretto.");
+                }
             };
             reader.readAsText(file);
         });
@@ -262,36 +287,10 @@
 
         function eliminaSpesa(i) { if(confirm("Cancellare?")) { spese.splice(i,1); localStorage.setItem('speseData', JSON.stringify(spese)); aggiornaUI(); } }
 
-        function toggleGrafici() {
-            const g = document.getElementById('graficiContainer');
-            g.style.display = (g.style.display === 'grid') ? 'none' : 'grid';
-            if(g.style.display === 'grid') disegnaGrafici();
-        }
-
-        function disegnaGrafici() {
-            if(chart1) chart1.destroy();
-            if(chart2) chart2.destroy();
-            let catData = {}; let mesiData = {};
-            spese.forEach(s => {
-                catData[s.categoria] = (catData[s.categoria] || 0) + s.importo;
-                const d = new Date(s.data);
-                const k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
-                mesiData[k] = (mesiData[k] || 0) + s.importo;
-            });
-            const palette = ['#0056b3', '#00a8ff', '#5a6d82', '#a1c4fd', '#708090'];
-            chart1 = new Chart(document.getElementById('chartCategorie'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: palette, borderWidth: 2, borderColor: '#fff' }] },
-                options: { plugins: { title: { display: true, text: 'CATEGORIE' }, legend: { position: 'bottom' } } }
-            });
-            chart2 = new Chart(document.getElementById('chartMesi'), {
-                type: 'bar',
-                data: { labels: Object.keys(mesiData), datasets: [{ label: 'Euro', data: Object.values(mesiData), backgroundColor: '#0056b3' }] },
-                options: { plugins: { title: { display: true, text: 'ULTIMI MESI' }, legend: { display: false } } }
-            });
-        }
-
-        window.onload = () => { document.getElementById('dataSpesa').valueAsDate = new Date(); aggiornaUI(); };
+        window.onload = () => { 
+            document.getElementById('dataSpesa').valueAsDate = new Date(); 
+            aggiornaUI(); 
+        };
     </script>
 </body>
 </html>
