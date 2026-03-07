@@ -30,10 +30,11 @@
             border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
         }
 
+        label { font-size: 11px; font-weight: 700; color: #555; display: block; margin-bottom: 5px; text-transform: uppercase; }
         input, select { 
             width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.9); 
             border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 8px; font-size: 16px; 
-            box-sizing: border-box; margin-bottom: 10px;
+            box-sizing: border-box; margin-bottom: 12px;
         }
         
         button { 
@@ -42,7 +43,6 @@
             border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
         }
 
-        /* DASHBOARD GRID */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
         .stat-box { 
@@ -50,19 +50,17 @@
             border: 1px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column;
         }
         
-        /* FIX: STORICO MESI - COLONNA SINGOLA A TUTTA LARGHEZZA */
         .stat-box.full { 
             grid-column: span 2; 
             display: block; 
             width: 100%; 
-            box-sizing: border-box;
         }
 
         .storico-mesi-container { 
             display: flex; 
             flex-direction: column; 
             width: 100%; 
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .mese-row { 
@@ -71,10 +69,10 @@
             align-items: center; 
             border-bottom: 1px solid rgba(0,0,0,0.05); 
             padding: 12px 0;
-            width: 100%; /* Forza l'espansione orizzontale */
+            width: 100%; 
         }
 
-        .mese-nome { font-weight: 600; font-size: 15px; color: #1d1d1f; }
+        .mese-nome { font-weight: 600; font-size: 15px; }
         .mese-cifre { font-weight: 800; color: #0056b3; font-size: 15px; white-space: nowrap; }
         .mese-sep { font-weight: 400; color: #bbb; margin: 0 4px; }
 
@@ -82,7 +80,7 @@
         .stat-value { font-size: 19px; font-weight: 800; color: #0056b3; }
 
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 4px; }
+        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 4px; text-align: left; }
         .importo-td { font-weight: 800; color: #0056b3; text-align: right; }
         
         .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; padding: 6px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; }
@@ -95,16 +93,20 @@
             <h1>Gestione Spese</h1>
             <div class="card">
                 <h2>Aggiungi Spesa</h2>
-                <input type="date" id="dataSpesa">
-                <input type="text" id="descrizioneSpesa" placeholder="Descrizione...">
+                <label>Data</label><input type="date" id="dataSpesa">
+                <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Cosa hai comprato?">
+                <label>Categoria</label>
                 <select id="categoriaSpesa">
                     <option value="Cibo">Cibo</option>
                     <option value="Trasporti">Trasporti</option>
+                    <option value="Casa">Casa</option>
+                    <option value="Svago">Svago</option>
                     <option value="Altro">Altro</option>
                 </select>
-                <input type="number" id="importoSpesa" placeholder="0.00" step="0.01">
+                <label>Importo (€)</label><input type="number" id="importoSpesa" placeholder="0.00" step="0.01">
                 <button onclick="aggiungiSpesa()">Registra Spesa</button>
             </div>
+            
             <div class="card">
                 <h2>📥 Importa da Numbers</h2>
                 <input type="file" id="csvFileInput" accept=".csv">
@@ -181,6 +183,37 @@
                     <td><button class="delete-btn" onclick="eliminaSpesa(${i})">×</button></td>
                 </tr>`).join('');
         }
+
+        // --- FUNZIONE IMPORTAZIONE CSV RIPRISTINATA ---
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const rows = text.split('\n');
+                let count = 0;
+                for(let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split(/[;,]/);
+                    if(cols.length >= 4) {
+                        const dParts = cols[0].split('/');
+                        const dataMs = new Date(dParts[2], dParts[1]-1, dParts[0]).getTime();
+                        // Pulizia importo (rimuove € e sistema virgole/punti)
+                        const impPuro = cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.');
+                        const imp = parseFloat(impPuro);
+                        if(!isNaN(dataMs) && !isNaN(imp)) {
+                            spese.push({ data: dataMs, descrizione: cols[1], categoria: cols[2], importo: imp });
+                            count++;
+                        }
+                    }
+                }
+                spese.sort((a,b) => b.data - a.data);
+                localStorage.setItem('speseData', JSON.stringify(spese));
+                aggiornaUI();
+                alert("Importate " + count + " spese con successo!");
+            };
+            reader.readAsText(file);
+        });
 
         function aggiungiSpesa() {
             const d = document.getElementById('dataSpesa').value;
