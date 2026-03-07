@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-title" content="App Spese">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>App Spese Pro 1.1</title>
+    <title>App Spese Pro 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -21,8 +21,7 @@
         }
 
         body { 
-            font-family: var(--font-main);
-            background-color: var(--bg); 
+            font-family: var(--font-main); background-color: var(--bg); 
             margin: 0; padding: 12px; color: #1d1d1f; 
             min-height: 100vh; -webkit-font-smoothing: antialiased;
         }
@@ -44,7 +43,7 @@
         }
 
         h1 { text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.02em; }
-        h2 { color: var(--primary); font-size: 16px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; }
+        h2 { color: var(--primary); font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
         .card { 
             background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
@@ -52,11 +51,10 @@
             box-shadow: 0 12px 35px rgba(0,0,0,0.03); margin-bottom: 20px;
         }
 
-        label { font-size: 11px; font-weight: 700; color: var(--secondary); display: block; margin-bottom: 6px; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: 700; color: var(--secondary); display: block; margin-bottom: 5px; text-transform: uppercase; }
         input, select { 
             font-family: var(--font-main); width: 100%; padding: 12px; background: #fff; 
-            border: 1px solid var(--border); border-radius: 12px; font-size: 16px; 
-            box-sizing: border-box; margin-bottom: 15px;
+            border: 1px solid var(--border); border-radius: 12px; font-size: 16px; margin-bottom: 15px; box-sizing: border-box;
         }
         
         button { 
@@ -64,7 +62,6 @@
             padding: 15px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer;
         }
 
-        /* DASHBOARD IPHONE */
         .stats-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
         @media (min-width: 768px) {
@@ -73,47 +70,42 @@
         }
 
         .stat-box { 
-            background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 16px; 
-            border: 1px solid var(--border); display: flex; flex-direction: column; 
-            width: 100%; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.5); padding: 16px; border-radius: 16px; 
+            border: 1px solid var(--border); display: flex; flex-direction: column; min-height: 90px;
         }
         
-        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; text-align: left; }
-        .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); text-align: center; width: 100%; }
+        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 22px; font-weight: 800; color: var(--primary); text-align: center; margin: auto; width: 100%; }
 
-        .mese-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--border); padding: 14px 0; width: 100%;
-        }
-        .mese-nome { font-weight: 600; font-size: 15px; color: #3a3a3c; }
+        /* STORICO MESI ESPANSO */
+        .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 14px 0; width: 100%; }
+        .mese-nome { font-weight: 600; font-size: 15px; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 15px; white-space: nowrap; }
 
-        /* GRAFICI */
+        /* GRAFICI: SOLO PER MAC */
         .grafici-container { display: none; margin-top: 25px; gap: 20px; }
-        @media (min-width: 1024px) { 
-            .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; } 
-            #btnToggleGrafici { display: none; }
-        }
+        @media (min-width: 1024px) { .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; } }
         .chart-box { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
 
-        .delete-btn { 
-            background: transparent; color: var(--secondary); border: none; padding: 8px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.6;
-        }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 14px 8px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .importo-td { font-weight: 700; color: var(--primary); text-align: right; }
+        .cat-badge { font-size: 10px; font-weight: 700; color: var(--secondary); background: #eee; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+
+        .delete-btn { background: transparent; color: var(--secondary); border: none; padding: 8px; cursor: pointer; opacity: 0.6; }
         .delete-btn svg { width: 18px; height: 18px; fill: currentColor; }
-        .cat-badge { font-size: 10px; font-weight: 700; color: var(--secondary); background: #eee; padding: 3px 8px; border-radius: 6px; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <div class="sidebar">
-            <p style="font-size: 9px; text-align: center; color: #bbb; margin-bottom: -15px;">v1.1 - 2026</p>
             <h1>App Spese</h1>
             <div class="card">
                 <h2>Nuova Spesa</h2>
                 <label>Data</label><input type="date" id="dataSpesa">
-                <label>Dettaglio</label><input type="text" id="descrizioneSpesa" placeholder="Cosa hai acquistato?">
+                <label>Dettaglio</label><input type="text" id="descrizioneSpesa" placeholder="Cosa hai comprato?">
                 <label>Categoria</label>
                 <select id="categoriaSpesa">
                     <option value="Cibo">Cibo</option>
@@ -150,8 +142,6 @@
                     </div>
                 </div>
 
-                <button id="btnToggleGrafici" style="margin-top:20px; background: var(--secondary);" onclick="toggleGrafici()">📊 Analisi Categorie</button>
-                
                 <div class="grafici-container" id="graficiContainer">
                     <div class="chart-box"><canvas id="chartCategorie"></canvas></div>
                     <div class="chart-box"><canvas id="chartMesi"></canvas></div>
@@ -160,11 +150,8 @@
 
             <div class="card">
                 <h2>Storico Operazioni</h2>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;" id="tabellaSpese">
-                        <thead>
-                            <tr><th style="text-align:left; font-size: 11px; padding: 10px;">Data</th><th style="text-align:left; font-size: 11px;">Descrizione</th><th style="text-align:right; font-size: 11px;">Euro</th><th></th></tr>
-                        </thead>
+                <div class="table-wrapper">
+                    <table id="tabellaSpese">
                         <tbody></tbody>
                     </table>
                 </div>
@@ -189,7 +176,7 @@
                 if (isNaN(d.getTime())) return;
                 const chiave = d.getFullYear() + "-" + d.getMonth();
                 if(d.getMonth() === oggi.getMonth() && d.getFullYear() === oggi.getFullYear()) meseCorr += s.importo;
-                if(!riepilogo[chiave]) riepilogo[chiave] = { totale: 0, nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), timestamp: d.getTime() };
+                if(!riepilogo[chiave]) riepilogo[chiave] = { totale: 0, nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), timestamp: d.getTime(), mese: d.getMonth(), anno: d.getFullYear() };
                 riepilogo[chiave].totale += s.importo;
             });
 
@@ -199,33 +186,32 @@
             let htmlMesi = "";
             Object.keys(riepilogo).sort((a,b) => riepilogo[b].timestamp - riepilogo[a].timestamp).forEach(k => {
                 const m = riepilogo[k];
-                const dMese = new Date(m.timestamp);
-                const giorni = (dMese.getMonth() === oggi.getMonth() && dMese.getFullYear() === oggi.getFullYear()) ? oggi.getDate() : new Date(dMese.getFullYear(), dMese.getMonth() + 1, 0).getDate();
-                htmlMesi += `<div class="mese-row"><span class="mese-nome">${m.nome}</span><span class="mese-cifre">${formattaEuro(m.totale)} <span style="color:#ddd">|</span> ${formattaEuro(m.totale/giorni)}</span></div>`;
+                const giorniInMese = (m.mese === oggi.getMonth() && m.anno === oggi.getFullYear()) ? oggi.getDate() : new Date(m.anno, m.mese + 1, 0).getDate();
+                htmlMesi += `<div class="mese-row"><span class="mese-nome">${m.nome}</span><span class="mese-cifre">${formattaEuro(m.totale)} <span style="color:#ddd;font-weight:400">|</span> ${formattaEuro(m.totale/giorniInMese)}</span></div>`;
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
 
             document.querySelector('#tabellaSpese tbody').innerHTML = spese.map((s, i) => `
                 <tr>
-                    <td style="padding: 10px; font-size: 13px; color: var(--secondary)">${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
+                    <td style="color:var(--secondary); font-weight:500;">${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
                     <td><span style="font-weight:600;">${s.descrizione}</span><br><span class="cat-badge">${s.categoria}</span></td>
-                    <td style="text-align:right; font-weight:700; color:var(--primary)">${formattaEuro(s.importo)}</td>
-                    <td style="text-align:right"><button class="delete-btn" onclick="eliminaSpesa(${i})"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg></button></td>
+                    <td class="importo-td">${formattaEuro(s.importo)}</td>
+                    <td style="text-align:right"><button class="delete-btn" onclick="eliminaSpesa(${i})"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></td>
                 </tr>`).join('');
             
-            if(window.innerWidth >= 1024 || (document.getElementById('graficiContainer') && document.getElementById('graficiContainer').style.display === 'grid')) disegnaGrafici();
+            if(window.innerWidth >= 1024) disegnaGrafici();
         }
 
-        // --- IMPORTAZIONE UNIVERSALE ---
+        // --- IMPORTAZIONE CSV RIPRISTINATA E CORRETTA ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
                 const lines = event.target.result.split(/\r?\n/);
-                let imported = 0;
-                lines.forEach((line, index) => {
-                    if (index === 0 || line.trim() === "") return;
+                let count = 0;
+                lines.forEach((line, i) => {
+                    if (i === 0 || !line.trim()) return;
                     const sep = line.includes(';') ? ';' : ',';
                     const cols = line.split(sep).map(c => c.trim().replace(/^"|"$/g, ''));
                     if (cols.length >= 4) {
@@ -236,7 +222,7 @@
                             const imp = parseFloat(cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.'));
                             if(!isNaN(d.getTime()) && !isNaN(imp)) {
                                 spese.push({ data: d.getTime(), descrizione: cols[1], categoria: cols[2] || "Altro", importo: imp });
-                                imported++;
+                                count++;
                             }
                         }
                     }
@@ -244,7 +230,7 @@
                 spese.sort((a,b) => b.data - a.data);
                 localStorage.setItem('speseData', JSON.stringify(spese));
                 aggiornaUI();
-                alert("Importate " + imported + " spese!");
+                alert("Importate " + count + " spese!");
             };
             reader.readAsText(file);
         });
@@ -260,24 +246,15 @@
 
         function eliminaSpesa(i) { if(confirm("Cancellare?")) { spese.splice(i,1); localStorage.setItem('speseData', JSON.stringify(spese)); aggiornaUI(); } }
 
-        function toggleGrafici() {
-            const g = document.getElementById('graficiContainer'), b = document.getElementById('btnToggleGrafici');
-            const isHidden = g.style.display === 'none' || g.style.display === '';
-            g.style.display = isHidden ? 'grid' : 'none';
-            b.innerText = isHidden ? '🔼 Nascondi Analisi' : '📊 Analisi Categorie';
-            if(isHidden) disegnaGrafici();
-        }
-
         function disegnaGrafici() {
             if(chart1) chart1.destroy(); if(chart2) chart2.destroy();
             let cats = {}, months = {};
             spese.forEach(s => {
                 cats[s.categoria] = (cats[s.categoria] || 0) + s.importo;
-                const d = new Date(s.data); const k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
+                const d = new Date(s.data); const k = nomiMesi[d.getMonth()];
                 months[k] = (months[k] || 0) + s.importo;
             });
-            const pal = ['#0056b3', '#00a8ff', '#5a6d82', '#a1c4fd', '#708090', '#c2e9fb'];
-            chart1 = new Chart(document.getElementById('chartCategorie'), { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: pal, borderWidth: 2, borderColor: '#fff' }] }, options: { plugins: { title: { display: true, text: 'CATEGORIE' }, legend: { position: 'bottom' } } } });
+            chart1 = new Chart(document.getElementById('chartCategorie'), { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#0056b3', '#00a8ff', '#5a6d82', '#a1c4fd', '#708090'] }] }, options: { plugins: { title: { display: true, text: 'CATEGORIE' } } } });
             chart2 = new Chart(document.getElementById('chartMesi'), { type: 'bar', data: { labels: Object.keys(months).reverse(), datasets: [{ label: 'Euro', data: Object.values(months).reverse(), backgroundColor: '#0056b3' }] }, options: { plugins: { title: { display: true, text: 'ULTIMI MESI' }, legend: { display: false } } } });
         }
 
