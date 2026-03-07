@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-title" content="Spese 2026">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>Spese 2026 iPhone</title>
+    <title>Spese 2026 iPhone v2</title>
 
     <style>
         :root {
@@ -69,7 +69,7 @@
         }
         .mese-row:last-child { border-bottom: none; }
         .mese-nome { font-weight: 600; font-size: 15px; }
-        .mese-cifre { font-weight: 700; color: var(--primary); font-size: 14px; white-space: nowrap; }
+        .mese-cifre { font-weight: 700; color: var(--primary); font-size: 13px; white-space: nowrap; }
 
         .table-wrapper { overflow-x: auto; margin-top: 5px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -86,13 +86,14 @@
 </head>
 <body>
 
+    <p style="text-align:center; font-size:8px; color:#ccc; margin-top:5px;">Update: Force IT Format v2</p>
     <h1>App Spese 2026</h1>
 
     <div class="app-container">
         <div class="card">
             <h2>Nuova Spesa</h2>
             <label>Data</label><input type="date" id="dataSpesa">
-            <label>Dettaglio</label><input type="text" id="descrizioneSpesa" placeholder="Cosa hai acquistato?">
+            <label>Dettaglio</label><input type="text" id="descrizioneSpesa" placeholder="Dettaglio spesa...">
             <label>Categoria</label>
             <select id="categoriaSpesa">
                 <option value="Cibo">Cibo</option>
@@ -142,15 +143,17 @@
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
-        // FUNZIONE UNICA PER IL PUNTO DELLE MIGLIAIA
-        function formattaEuro(n) { 
-            if (isNaN(n)) n = 0;
-            return parseFloat(n).toLocaleString('it-IT', { 
-                style: 'currency', 
-                currency: 'EUR', 
-                minimumFractionDigits: 2, 
-                maximumFractionDigits: 2 
-            }); 
+        // --- FUNZIONE DI FORMATTAZIONE MANUALE (BLINDATA) ---
+        function formattaEuro(n) {
+            let num = parseFloat(n);
+            if (isNaN(num)) num = 0;
+            
+            // Creiamo la stringa con 2 decimali e virgola
+            let parts = num.toFixed(2).split(".");
+            // Aggiungiamo il punto delle migliaia manualmente
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            
+            return parts.join(",") + " €";
         }
 
         function aggiornaUI() {
@@ -173,15 +176,16 @@
             let htmlMesi = "";
             Object.keys(riepilogo).sort((a,b) => riepilogo[b].timestamp - riepilogo[a].timestamp).forEach(k => {
                 const m = riepilogo[k];
+                const dMese = new Date(m.timestamp);
                 const ggMese = (m.mese === oggi.getMonth() && m.anno === oggi.getFullYear()) ? oggi.getDate() : new Date(m.anno, m.mese + 1, 0).getDate();
                 
-                // --- FIX APPLICATO QUI: ENTRAMBI I VALORI FORMATTATI ---
-                const totaleFormattato = formattaEuro(m.totale);
-                const mediaFormattata = formattaEuro(m.totale / ggMese);
+                // Formattazione forzata per entrambi
+                const tF = formattaEuro(m.totale);
+                const mF = formattaEuro(m.totale / ggMese);
 
                 htmlMesi += `<div class="mese-row">
                     <span class="mese-nome">${m.nome}</span>
-                    <span class="mese-cifre">${totaleFormattato} <span style="color:#ddd;font-weight:400">|</span> ${mediaFormattata}</span>
+                    <span class="mese-cifre">${tF} <span style="color:#ddd;font-weight:400">|</span> ${mF}</span>
                 </div>`;
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
