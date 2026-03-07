@@ -71,7 +71,7 @@
         .stat-box.full { grid-column: span 2; }
         .stat-title { font-size: 11px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 700; color: #0056b3; margin-top: 5px; }
-        .stat-value.big { font-size: 28px; }
+        .stat-value.big { font-size: 24px; }
         
         .mese-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0; font-size: 15px; }
         .mese-row:last-child { border-bottom: none; }
@@ -93,24 +93,34 @@
     <div class="card">
         <h2>Dashboard</h2>
         <div class="stats-grid">
-            <div class="stat-box full">
-                <div class="stat-title">Spesa Mese Corrente</div>
-                <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
-                <div style="font-size: 13px; color: #555; margin-top: 8px; font-weight: 500;">
-                    Budget Ideale: <b>300,00 €</b>
-                </div>
-            </div>
             
             <div class="stat-box">
+                <div class="stat-title">Mese Corrente</div>
+                <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
+                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">
+                    Budget: <b>300,00 €</b>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-title">Spesa Totale (Finora)</div>
+                <div class="stat-value big" id="totaleAssoluto">0,00 €</div>
+            </div>
+            
+            <div class="stat-box full" style="margin-top: 5px;">
                 <div class="stat-title">Media Mese / Giorno</div>
                 <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
             </div>
-            <div class="stat-box">
+
+            <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
+                🛒 Focus: Categoria Cibo
+            </div>
+            
+            <div class="stat-box full">
                 <div class="stat-title">Media Cibo / Giorno</div>
                 <div class="stat-value" id="mediaCibo">0,00 €</div>
             </div>
             
-            <div class="stat-box full">
+            <div class="stat-box full" style="margin-top: 5px;">
                 <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
                 <div id="spesaPerMeseLista" style="text-align: left;">
                     </div>
@@ -290,29 +300,33 @@
         function aggiornaInterfaccia() {
             let spesaMeseCorrente = 0;
             let totaleCibo = 0;
+            let totaleAssoluto = 0;
             let riepilogoMesi = {};
 
             const oggi = new Date();
             const meseCurr = oggi.getMonth();
             const annoCurr = oggi.getFullYear();
-            const giornoCurr = oggi.getDate(); // Serve per calcolare la media giornaliera di questo mese
+            const giornoCurr = oggi.getDate(); 
             
             const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
             spese.forEach(s => {
                 const d = new Date(s.data);
                 
-                // 1. Calcolo Mese Corrente
+                // 1. Somma Assoluta Finora
+                totaleAssoluto += s.importo;
+
+                // 2. Calcolo Mese Corrente
                 if (d.getMonth() === meseCurr && d.getFullYear() === annoCurr) {
                     spesaMeseCorrente += s.importo;
                 }
 
-                // 2. Calcolo Cibo Totale
+                // 3. Calcolo Cibo Totale
                 if (s.categoria === "Cibo") {
                     totaleCibo += s.importo;
                 }
 
-                // 3. Raggruppamento Mesi
+                // 4. Raggruppamento Mesi
                 let chiaveOrdinamento = d.getFullYear() * 100 + d.getMonth(); 
                 let nomeMese = nomiMesi[d.getMonth()] + " " + d.getFullYear();
 
@@ -326,15 +340,17 @@
             let boxMese = document.getElementById('spesaMeseCorrente');
             boxMese.innerText = formattaEuro(spesaMeseCorrente);
             
-            // Se supera i 300€ diventa ROSSO, altrimenti rimane del blu scuro/tema
+            // Se supera i 300€ diventa ROSSO
             if(spesaMeseCorrente > 300) {
                 boxMese.style.color = "#dc3545"; 
             } else {
                 boxMese.style.color = "#0056b3"; 
             }
 
+            // --- GESTIONE TOTALE ASSOLUTO ---
+            document.getElementById('totaleAssoluto').innerText = formattaEuro(totaleAssoluto);
+
             // --- MEDIA MESE CORRENTE AL GIORNO ---
-            // Divide la spesa del mese attuale per il giorno di oggi (es. oggi è il 7 del mese)
             let mediaMeseCorrente = spesaMeseCorrente / giornoCurr;
             document.getElementById('mediaMeseCorrente').innerText = formattaEuro(mediaMeseCorrente);
             
