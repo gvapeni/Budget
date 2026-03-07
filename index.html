@@ -34,7 +34,6 @@
             z-index: -1; 
         }
 
-        /* CONTAINER PRINCIPALE */
         .app-container { display: flex; flex-direction: column; gap: 15px; max-width: 1300px; margin: 0 auto; }
         
         @media (min-width: 1024px) {
@@ -65,23 +64,24 @@
             padding: 15px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer;
         }
 
-        /* DASHBOARD - FIX DEFINITIVO */
-        .stats-grid { display: flex; flex-direction: column; gap: 12px; }
+        /* DASHBOARD - OTTIMIZZATA PER IPHONE */
+        .stats-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
-        @media (min-width: 600px) {
+        @media (min-width: 768px) {
             .stats-grid { display: grid; grid-template-columns: 1fr 1fr; }
             .stat-box.full { grid-column: span 2; }
         }
 
         .stat-box { 
-            background: rgba(255, 255, 255, 0.5); padding: 16px; border-radius: 16px; 
-            border: 1px solid var(--border); display: flex; flex-direction: column; min-height: 90px;
+            background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 16px; 
+            border: 1px solid var(--border); display: flex; flex-direction: column; 
+            width: 100%; box-sizing: border-box;
         }
         
-        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
-        .stat-value { font-size: 22px; font-weight: 800; color: var(--primary); margin: auto; text-align: center; width: 100%; }
+        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; text-align: left; }
+        .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); text-align: center; width: 100%; }
 
-        /* STORICO MESI - FIX DEFINITIVO */
+        /* STORICO MESI - LAYOUT PULITO */
         .storico-mesi-container { width: 100%; }
         .mese-row { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -90,12 +90,11 @@
         .mese-nome { font-weight: 600; font-size: 15px; color: #3a3a3c; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 15px; white-space: nowrap; }
 
-        /* GRAFICI */
+        /* GRAFICI E TABELLA */
         .grafici-container { display: none; margin-top: 25px; gap: 20px; }
         @media (min-width: 1024px) { .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; } }
         .chart-box { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
 
-        /* TABELLA */
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; font-size: 11px; color: var(--secondary); padding: 12px 8px; text-transform: uppercase; }
