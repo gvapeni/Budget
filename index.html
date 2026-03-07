@@ -68,17 +68,16 @@
         .stat-value { font-size: 20px; font-weight: 700; color: #0056b3; margin-top: 5px; }
         .stat-value.big { font-size: 24px; }
         
-        .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0; font-size: 15px; }
+        .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 0; font-size: 15px; }
         .mese-row:last-child { border-bottom: none; }
-        .mese-info { display: flex; flex-direction: column; }
-        .mese-media { font-size: 11px; color: #888; margin-top: 2px; }
+        .mese-media { font-size: 12px; color: #888; font-weight: 400; margin-left: 6px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 5px; text-align: left; vertical-align: middle; }
         th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
         .importo-td { font-weight: bold; color: #0056b3; text-align: right; }
         
-        /* NUOVO BOTTONE CESTINO (Migliorato) */
+        /* BOTTONE CESTINO */
         .delete-btn { 
             background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; 
             padding: 8px; border-radius: 50%; cursor: pointer; 
@@ -232,7 +231,6 @@
         }
         
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
-            // Logica importazione CSV (intatta)
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
@@ -293,7 +291,7 @@
             });
             
             document.getElementById('spesaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente);
-            document.getElementById('mediaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente / giornoCurr);
+            document.getElementById('mediaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente / (giornoCurr || 1));
 
             let boxCiboMese = document.getElementById('ciboMeseCorrente');
             boxCiboMese.innerText = formattaEuro(ciboMeseCorrente);
@@ -307,21 +305,21 @@
             }
             document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
 
-            // STAMPA LISTA MESI CON MEDIA GIORNALIERA
+            // STAMPA LISTA MESI CON MEDIA GIORNALIERA A FIANCO
             let htmlMesi = "";
             Object.keys(riepilogoMesi).sort((a, b) => b - a).forEach(chiave => {
                 let meseData = riepilogoMesi[chiave];
                 
                 // Calcolo giorni nel mese per la media
                 let giorniNelMese = new Date(meseData.anno, meseData.mese + 1, 0).getDate();
-                if (meseData.anno === annoCurr && meseData.mese === meseCurr) { giorniNelMese = giornoCurr; } // Mese corrente = giorni passati
+                if (meseData.anno === annoCurr && meseData.mese === meseCurr) { giorniNelMese = giornoCurr || 1; }
                 let mediaDelMese = meseData.totale / giorniNelMese;
 
                 htmlMesi += `
                     <div class="mese-row">
-                        <div class="mese-info">
-                            <span>${meseData.nome}</span>
-                            <span class="mese-media">Media: ${formattaEuro(mediaDelMese)} / giorno</span>
+                        <div>
+                            <span style="font-weight: 600;">${meseData.nome}</span>
+                            <span class="mese-media">(Media: ${formattaEuro(mediaDelMese)} / gg)</span>
                         </div>
                         <span style="font-weight: 700; color: #0056b3;">${formattaEuro(meseData.totale)}</span>
                     </div>`;
