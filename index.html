@@ -5,47 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="App Spese">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     <link rel="icon" href="https://img.icons8.com/color/180/wallet.png">
     
     <title>Gestione Spese</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a1c; margin: 0; padding: 15px; color: white; position: relative; overflow-x: hidden; }
-        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #001f2e 100%); opacity: 0.1; filter: blur(100px); z-index: -1; pointer-events: none; }
+        /* TEMA CHIARO ELEGANTE */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f5f7fa; 
+            margin: 0; padding: 15px; color: #1d1d1f; 
+            position: relative; overflow-x: hidden; 
+        }
         
-        h1 { text-align: center; color: white; font-size: 28px; font-weight: 700; margin-bottom: 25px; letter-spacing: -0.5px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
-        h2 { text-align: left; color: #00f2fe; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; }
+        body::before { 
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); 
+            opacity: 0.4; filter: blur(80px); z-index: -1; pointer-events: none; 
+        }
         
-        .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1d1d1f; font-size: 28px; font-weight: 700; margin-bottom: 25px; letter-spacing: -0.5px; }
+        h2 { text-align: left; color: #0056b3; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; }
+        
+        /* PANNELLI IN VETRO CHIARO */
+        .card { 
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border-radius: 14px; padding: 20px; margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05); 
+        }
         
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 13px; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; }
-        input[type="date"], input[type="text"], input[type="number"], select { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.15); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 16px; box-sizing: border-box; color: white; transition: border-color 0.3s; font-family: inherit; }
-        input:focus, select:focus { border-color: #00f2fe; outline: none; background: rgba(0, 0, 0, 0.25); }
-        select option { background-color: #1a1a1c; color: white; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        button { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.3s, transform 0.1s; font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); }
+        input[type="date"], input[type="text"], input[type="number"], select { 
+            width: 100%; padding: 12px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+            border-radius: 10px; font-size: 16px; 
+            box-sizing: border-box; color: #1d1d1f; 
+            transition: border-color 0.3s; font-family: inherit; 
+        }
+        input:focus, select:focus { border-color: #00f2fe; outline: none; background: #fff; }
+        select option { background-color: #fff; color: #1d1d1f; }
+        
+        button { 
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
+            color: white; border: none; padding: 14px; width: 100%; 
+            border-radius: 10px; font-size: 16px; font-weight: 700; 
+            cursor: pointer; transition: background 0.3s, transform 0.1s; 
+            font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); 
+        }
         button:active { transform: scale(0.98); }
         
+        /* DASHBOARD GRID */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-box { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(0, 242, 254, 0.2); position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .stat-box { 
+            background: rgba(255, 255, 255, 0.5); 
+            padding: 15px; border-radius: 12px; text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
+        }
         .stat-box.full { grid-column: span 2; }
-        .stat-box::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 10px; padding: 1px; background: linear-gradient(to right, #4facfe, #00f2fe); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.3; }
-        .stat-title { font-size: 11px; color: #b0bec5; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-value { font-size: 20px; font-weight: 700; color: #00f2fe; margin-top: 5px; text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); }
-        .stat-value.big { font-size: 24px; }
+        .stat-title { font-size: 11px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 20px; font-weight: 700; color: #0056b3; margin-top: 5px; }
+        .stat-value.big { font-size: 28px; }
         
-        .mese-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0; font-size: 15px; }
+        .mese-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0; font-size: 15px; }
         .mese-row:last-child { border-bottom: none; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        th, td { border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding: 10px 5px; text-align: left; }
-        th { background-color: rgba(0, 242, 254, 0.03); color: #00f2fe; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
-        .importo-td { font-weight: bold; color: #00f2fe; text-align: right; }
+        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 5px; text-align: left; }
+        th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+        .importo-td { font-weight: bold; color: #0056b3; text-align: right; }
+        
         .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid #dc3545; padding: 4px 6px; font-size: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; }
         .delete-btn:active { background: rgba(220, 53, 69, 0.3); }
-        .cat-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); font-size: 10px; }
+        .cat-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 10px; color: #555; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -55,16 +93,25 @@
     <div class="card">
         <h2>Dashboard</h2>
         <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-title">Mese Corrente</div>
+            <div class="stat-box full">
+                <div class="stat-title">Spesa Mese Corrente</div>
                 <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
+                <div style="font-size: 13px; color: #555; margin-top: 8px; font-weight: 500;">
+                    Budget Ideale: <b>300,00 €</b>
+                </div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-title">Media Mese / Giorno</div>
+                <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
             </div>
             <div class="stat-box">
                 <div class="stat-title">Media Cibo / Giorno</div>
-                <div class="stat-value big" id="mediaCibo">0,00 €</div>
+                <div class="stat-value" id="mediaCibo">0,00 €</div>
             </div>
+            
             <div class="stat-box full">
-                <div class="stat-title" style="margin-bottom: 10px;">Spesa per Mese</div>
+                <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
                 <div id="spesaPerMeseLista" style="text-align: left;">
                     </div>
             </div>
@@ -102,8 +149,8 @@
     
     <div class="card">
         <h2>📥 Importa Dati da Numbers</h2>
-        <p style="font-size: 12px; color: #b0bec5; margin-bottom: 10px;">Dal Mac, apri il file Numbers, vai su <b>File > Esporta come > CSV</b>. Poi seleziona il file generato cliccando qui sotto:</p>
-        <input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(0,242,254,0.05); border: 1px dashed #00f2fe; color: #00f2fe; cursor: pointer; width: 100%; border-radius: 8px;">
+        <p style="font-size: 12px; color: #555; margin-bottom: 10px;">Dal Mac, apri il file Numbers, vai su <b>File > Esporta come > CSV</b>. Poi seleziona il file generato cliccando qui sotto:</p>
+        <input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(0,86,179,0.05); border: 1px dashed #0056b3; color: #0056b3; cursor: pointer; width: 100%; border-radius: 8px;">
     </div>
 
     <div class="card">
@@ -171,7 +218,7 @@
             }
         }
         
-        // --- MOTORE DI IMPORTAZIONE CSV ---
+        // --- MOTORE IMPORTAZIONE CSV ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -248,8 +295,8 @@
             const oggi = new Date();
             const meseCurr = oggi.getMonth();
             const annoCurr = oggi.getFullYear();
+            const giornoCurr = oggi.getDate(); // Serve per calcolare la media giornaliera di questo mese
             
-            // Array con i nomi dei mesi in italiano per formattazione sicura
             const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
             spese.forEach(s => {
@@ -260,13 +307,13 @@
                     spesaMeseCorrente += s.importo;
                 }
 
-                // 2. Calcolo totale Cibo
+                // 2. Calcolo Cibo Totale
                 if (s.categoria === "Cibo") {
                     totaleCibo += s.importo;
                 }
 
-                // 3. Raggruppamento per Mese
-                let chiaveOrdinamento = d.getFullYear() * 100 + d.getMonth(); // Es. 202602 (Feb 2026) per ordinare bene
+                // 3. Raggruppamento Mesi
+                let chiaveOrdinamento = d.getFullYear() * 100 + d.getMonth(); 
                 let nomeMese = nomiMesi[d.getMonth()] + " " + d.getFullYear();
 
                 if (!riepilogoMesi[chiaveOrdinamento]) {
@@ -275,10 +322,23 @@
                 riepilogoMesi[chiaveOrdinamento].totale += s.importo;
             });
             
-            // Scrivi Mese Corrente
-            document.getElementById('spesaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente);
+            // --- GESTIONE MESE CORRENTE E BUDGET 300€ ---
+            let boxMese = document.getElementById('spesaMeseCorrente');
+            boxMese.innerText = formattaEuro(spesaMeseCorrente);
             
-            // Scrivi Media Cibo
+            // Se supera i 300€ diventa ROSSO, altrimenti rimane del blu scuro/tema
+            if(spesaMeseCorrente > 300) {
+                boxMese.style.color = "#dc3545"; 
+            } else {
+                boxMese.style.color = "#0056b3"; 
+            }
+
+            // --- MEDIA MESE CORRENTE AL GIORNO ---
+            // Divide la spesa del mese attuale per il giorno di oggi (es. oggi è il 7 del mese)
+            let mediaMeseCorrente = spesaMeseCorrente / giornoCurr;
+            document.getElementById('mediaMeseCorrente').innerText = formattaEuro(mediaMeseCorrente);
+            
+            // --- MEDIA CIBO GLOBALE ---
             let mediaCibo = 0;
             if (spese.length > 0) {
                 let dateArray = spese.map(s => s.data);
@@ -289,28 +349,28 @@
             }
             document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
 
-            // Stampa la lista "Spesa per Mese" ordinata dal più recente al più vecchio
+            // --- STAMPA LISTA MESI ---
             let htmlMesi = "";
-            let chiaviOrdinate = Object.keys(riepilogoMesi).sort((a, b) => b - a); // Ordine decrescente
+            let chiaviOrdinate = Object.keys(riepilogoMesi).sort((a, b) => b - a);
             
             chiaviOrdinate.forEach(chiave => {
                 let mese = riepilogoMesi[chiave];
                 htmlMesi += `
                     <div class="mese-row">
                         <span>${mese.nome}</span>
-                        <span style="font-weight: bold; color: #00f2fe;">${formattaEuro(mese.totale)}</span>
+                        <span style="font-weight: 700; color: #0056b3;">${formattaEuro(mese.totale)}</span>
                     </div>`;
             });
             
             if (htmlMesi === "") htmlMesi = "<div style='color:#b0bec5; text-align:center;'>Nessun dato registrato</div>";
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
             
-            // Stampa Tabella
+            // --- STAMPA TABELLA ---
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${formattaData(s.data)}</td>
                     <td>
-                        <div style="font-weight:bold;">${s.descrizione}</div>
+                        <div style="font-weight:700;">${s.descrizione}</div>
                         <div class="cat-badge">${s.categoria}</div>
                     </td>
                     <td class="importo-td">${formattaEuro(s.importo)}</td>
