@@ -59,18 +59,24 @@
             cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); 
         }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } .stat-box.full { grid-column: span 2; } }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; } .stat-box.full { grid-column: span 2; } }
         
         .stat-box { 
-            background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; 
+            background: rgba(255, 255, 255, 0.5); padding: 12px; border-radius: 12px; 
             border: 1px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; justify-content: space-between;
         }
         
         .stat-title { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; }
-        .stat-value { font-size: 18px; font-weight: 800; color: #0056b3; margin-top: 5px; }
+        .stat-value { font-size: 19px; font-weight: 800; color: #0056b3; margin-top: 5px; }
 
-        .storico-mesi-container { display: flex; flex-direction: column; width: 100%; }
+        /* FIX: STORICO MESI A TUTTA LARGHEZZA */
+        .storico-mesi-container { 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%; 
+            margin-top: 5px;
+        }
         .mese-row { 
             display: flex; 
             justify-content: space-between; 
@@ -79,15 +85,25 @@
             padding: 12px 0;
             width: 100%;
         }
-        .mese-nome { font-weight: 600; font-size: 14px; color: #333; }
-        .mese-cifre { font-weight: 800; color: #0056b3; font-size: 14px; text-align: right; }
+        .mese-nome { 
+            font-weight: 600; 
+            font-size: 15px; 
+            color: #1d1d1f;
+        }
+        .mese-cifre { 
+            font-weight: 800; 
+            color: #0056b3; 
+            font-size: 15px; 
+            text-align: right;
+            white-space: nowrap;
+        }
         .mese-sep { font-weight: 400; color: #bbb; margin: 0 4px; }
 
         table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
         th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 4px; text-align: left; }
         .importo-td { font-weight: 800; color: #0056b3; text-align: right; }
         
-        .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; padding: 6px; border-radius: 50%; width: 26px; height: 26px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; padding: 6px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .cat-badge { display: inline-block; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 9px; font-weight: 600; color: #555; }
 
         .grafici-container { display: none; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
@@ -100,7 +116,6 @@
     <div class="app-container">
         <div class="sidebar">
             <h1>Gestione Spese</h1>
-            
             <div class="card">
                 <h2>Aggiungi Spesa</h2>
                 <label>Data</label><input type="date" id="dataSpesa">
@@ -121,8 +136,7 @@
 
             <div class="card">
                 <h2>📥 Importa da Numbers</h2>
-                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Carica il file .csv esportato dal tuo Mac:</p>
-                <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px; padding: 5px; border: 1px dashed #0056b3; width: 100%; border-radius: 6px;">
+                <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px; width: 100%;">
             </div>
         </div>
 
@@ -139,7 +153,7 @@
                         <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
                     </div>
                     <div class="stat-box full">
-                        <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
+                        <div class="stat-title" style="margin-bottom: 5px;">STORICO SPESA PER MESE</div>
                         <div id="spesaPerMeseLista" class="storico-mesi-container"></div>
                     </div>
                 </div>
@@ -193,7 +207,6 @@
             if(confirm("Eliminare questa spesa?")) { spese.splice(i,1); salvaDati(); }
         }
 
-        // LOGICA IMPORTAZIONE CSV
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -205,11 +218,11 @@
                 for(let i = 1; i < rows.length; i++) {
                     const cols = rows[i].split(/[;,]/);
                     if(cols.length >= 4) {
-                        const dataParts = cols[0].split('/');
-                        const dataMs = new Date(dataParts[2], dataParts[1]-1, dataParts[0]).getTime();
+                        const dParts = cols[0].split('/');
+                        const dataMs = new Date(dParts[2], dParts[1]-1, dParts[0]).getTime();
                         const imp = parseFloat(cols[cols.length-1].replace('€','').replace(',','.').trim());
                         if(!isNaN(dataMs) && !isNaN(imp)) {
-                            spese.push({ data: dataMs, descrizione: cols[1], categoria: cols[2] || "Altro", importo: imp });
+                            spese.push({ data: dataMs, descrizione: cols[1], categoria: cols[2], importo: imp });
                             count++;
                         }
                     }
@@ -253,10 +266,10 @@
                     <td>${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
                     <td><div style="font-weight:700;">${s.descrizione}</div><div class="cat-badge">${s.categoria}</div></td>
                     <td class="importo-td">${formattaEuro(s.importo)}</td>
-                    <td><button class="delete-btn" onclick="eliminaSpesa(${i})">&times;</button></td>
+                    <td style="text-align:center;"><button class="delete-btn" onclick="eliminaSpesa(${i})">&times;</button></td>
                 </tr>`).join('');
             
-            if(document.getElementById('graficiContainer').style.display === 'block' || window.innerWidth >= 1024) disegnaGrafici();
+            if(window.innerWidth >= 1024 || document.getElementById('graficiContainer').style.display === 'block') disegnaGrafici();
         }
 
         function toggleGrafici() {
@@ -275,8 +288,8 @@
             let catData = {}; let mesiData = {};
             spese.forEach(s => {
                 catData[s.categoria] = (catData[s.categoria] || 0) + s.importo;
-                let d = new Date(s.data);
-                let k = nomiMesi[d.getMonth()];
+                const d = new Date(s.data);
+                const k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
                 mesiData[k] = (mesiData[k] || 0) + s.importo;
             });
 
