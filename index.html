@@ -196,9 +196,12 @@
             return d.getDate().toString().padStart(2,'0') + "/" + (d.getMonth()+1).toString().padStart(2,'0') + "/" + d.getFullYear().toString().substring(2); 
         }
 
-        // NUOVA FUNZIONE PER I PUNTI DELLE MIGLIAIA
+        // NUOVA FUNZIONE BLINDATA PER I PUNTI DELLE MIGLIAIA
         function formattaEuro(numero) {
-            return parseFloat(numero).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+            let numPunto = parseFloat(numero).toFixed(2); // Trasforma es. 1250 in "1250.00"
+            let parti = numPunto.split('.'); // Divide "1250" da "00"
+            parti[0] = parti[0].replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Aggiunge il punto a "1250" -> "1.250"
+            return parti[0] + "," + parti[1] + " €"; // Unisce tutto -> "1.250,00 €"
         }
         
         function salvaDati() { 
@@ -305,7 +308,7 @@
             }
             document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
 
-            // STAMPA LISTA MESI: INVERTITI TOTALE E MEDIA
+            // STAMPA LISTA MESI: INVERTITI TOTALE E MEDIA CON PUNTI MIGLIAIA
             let htmlMesi = "";
             Object.keys(riepilogoMesi).sort((a, b) => b - a).forEach(chiave => {
                 let meseData = riepilogoMesi[chiave];
@@ -325,7 +328,7 @@
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi || "<div style='color:#b0bec5; text-align:center;'>Nessun dato registrato</div>";
             
-            // STAMPA TABELLA CON NUOVO CESTINO
+            // STAMPA TABELLA CON NUOVO CESTINO E PUNTI MIGLIAIA
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${formattaData(s.data)}</td>
@@ -365,7 +368,6 @@
                 mesiData[keyMese] = (mesiData[keyMese] || 0) + s.importo;
             });
 
-            // Grafico Ciambella (Categorie)
             const ctxCat = document.getElementById('chartCategorie').getContext('2d');
             chartCatInstance = new Chart(ctxCat, {
                 type: 'doughnut',
@@ -380,7 +382,6 @@
                 options: { plugins: { legend: { position: 'bottom' } } }
             });
 
-            // Grafico Colonne (Andamento Mesi)
             let sortedMesi = Object.keys(mesiData).sort();
             let labelsMesi = sortedMesi.map(k => { let p = k.split('-'); return nomiMesi[parseInt(p[1])-1].substring(0,3) + " " + p[0].substring(2); });
             let valsMesi = sortedMesi.map(k => mesiData[k]);
