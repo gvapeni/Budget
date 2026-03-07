@@ -34,7 +34,10 @@
         .stat-box::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 10px; padding: 1px; background: linear-gradient(to right, #4facfe, #00f2fe); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.3; }
         .stat-title { font-size: 11px; color: #b0bec5; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 700; color: #00f2fe; margin-top: 5px; text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); }
-        .stat-value.big { font-size: 28px; }
+        .stat-value.big { font-size: 24px; }
+        
+        .mese-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0; font-size: 15px; }
+        .mese-row:last-child { border-bottom: none; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         th, td { border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding: 10px 5px; text-align: left; }
@@ -52,21 +55,18 @@
     <div class="card">
         <h2>Dashboard</h2>
         <div class="stats-grid">
-            <div class="stat-box full">
-                <div class="stat-title">Spesa Totale</div>
-                <div class="stat-value big" id="totaleSpeso">0,00 €</div>
+            <div class="stat-box">
+                <div class="stat-title">Mese Corrente</div>
+                <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
             </div>
             <div class="stat-box">
-                <div class="stat-title">Media Giornaliera</div>
-                <div class="stat-value" id="mediaGiornaliera">0,00 €</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-title">N° Movimenti</div>
-                <div class="stat-value" id="numeroSpese">0</div>
+                <div class="stat-title">Media Cibo / Giorno</div>
+                <div class="stat-value big" id="mediaCibo">0,00 €</div>
             </div>
             <div class="stat-box full">
-                <div class="stat-title">Categoria Più Costosa</div>
-                <div class="stat-value" id="categoriaTop">-</div>
+                <div class="stat-title" style="margin-bottom: 10px;">Spesa per Mese</div>
+                <div id="spesaPerMeseLista" style="text-align: left;">
+                    </div>
             </div>
         </div>
     </div>
@@ -171,7 +171,7 @@
             }
         }
         
-        // --- MOTORE DI IMPORTAZIONE CSV INTELLIGENTE ---
+        // --- MOTORE DI IMPORTAZIONE CSV ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -179,15 +179,14 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 const text = event.target.result;
-                const delimiter = text.includes(';') ? ';' : ','; // Apple usa spesso il punto e virgola
+                const delimiter = text.includes(';') ? ';' : ','; 
                 const rows = text.split('\n');
                 let importate = 0;
 
-                for(let i = 1; i < rows.length; i++) { // Salta l'intestazione (i = 1)
+                for(let i = 1; i < rows.length; i++) { 
                     let row = rows[i].trim();
                     if(!row) continue;
 
-                    // Divide le colonne evitando errori con le virgolette di Numbers
                     let cols = [];
                     let curVal = '';
                     let inQuotes = false;
@@ -198,9 +197,8 @@
                         else curVal += char;
                     }
                     cols.push(curVal.trim());
-                    cols = cols.map(c => c.replace(/^"|"$/g, '').trim()); // Pulisce le virgolette
+                    cols = cols.map(c => c.replace(/^"|"$/g, '').trim());
 
-                    // Associa le colonne (Basato sul tuo PDF: Data, Mese, Desc, Cat, Importo)
                     let dataRif, descRif, catRif, impRif;
                     
                     if (cols.length >= 5) {
@@ -208,10 +206,9 @@
                     } else if (cols.length === 4) {
                         dataRif = cols[0]; descRif = cols[1]; catRif = cols[2]; impRif = cols[3];
                     } else {
-                        continue; // Salta righe invalide
+                        continue; 
                     }
 
-                    // Parsa la data (es. 01/12/25)
                     let dParts = dataRif.split('/');
                     if(dParts.length === 3) {
                         let anno = parseInt(dParts[2]);
@@ -220,12 +217,10 @@
                         let giorno = parseInt(dParts[0]);
                         let msData = new Date(anno, mese, giorno).getTime();
 
-                        // Parsa l'importo (es. 2,90 € -> 2.90)
                         let pulito = impRif.replace('€', '').replace(/\s/g, ''); 
-                        pulito = pulito.replace(/\./g, '').replace(',', '.'); // Adatta le virgole italiane ai punti inglesi
+                        pulito = pulito.replace(/\./g, '').replace(',', '.'); 
                         let impNum = parseFloat(pulito);
 
-                        // Se i dati sono corretti, li aggiunge
                         if(!isNaN(msData) && !isNaN(impNum)) {
                             spese.push({ data: msData, descrizione: descRif, categoria: catRif, importo: impNum });
                             importate++;
@@ -234,57 +229,83 @@
                 }
 
                 if(importate > 0) {
-                    spese.sort((a,b) => b.data - a.data); // Riordina in automatico
+                    spese.sort((a,b) => b.data - a.data); 
                     salvaDati();
-                    alert("✅ Successo! Hai importato " + importate + " spese dal tuo file Numbers.");
-                    document.getElementById('csvFileInput').value = ""; // Svuota l'input
+                    alert("✅ Successo! Hai importato " + importate + " spese.");
+                    document.getElementById('csvFileInput').value = ""; 
                 } else {
-                    alert("❌ Errore: Nessuna spesa trovata. Assicurati di aver esportato correttamente il file in CSV.");
+                    alert("❌ Nessuna spesa trovata. Assicurati che il file sia corretto.");
                 }
             };
             reader.readAsText(file);
         });
         
         function aggiornaInterfaccia() {
-            let totale = 0;
-            let categorieTotali = {};
+            let spesaMeseCorrente = 0;
+            let totaleCibo = 0;
+            let riepilogoMesi = {};
+
+            const oggi = new Date();
+            const meseCurr = oggi.getMonth();
+            const annoCurr = oggi.getFullYear();
             
+            // Array con i nomi dei mesi in italiano per formattazione sicura
+            const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
             spese.forEach(s => {
-                totale += s.importo;
-                if(categorieTotali[s.categoria]) {
-                    categorieTotali[s.categoria] += s.importo;
-                } else {
-                    categorieTotali[s.categoria] = s.importo;
+                const d = new Date(s.data);
+                
+                // 1. Calcolo Mese Corrente
+                if (d.getMonth() === meseCurr && d.getFullYear() === annoCurr) {
+                    spesaMeseCorrente += s.importo;
                 }
+
+                // 2. Calcolo totale Cibo
+                if (s.categoria === "Cibo") {
+                    totaleCibo += s.importo;
+                }
+
+                // 3. Raggruppamento per Mese
+                let chiaveOrdinamento = d.getFullYear() * 100 + d.getMonth(); // Es. 202602 (Feb 2026) per ordinare bene
+                let nomeMese = nomiMesi[d.getMonth()] + " " + d.getFullYear();
+
+                if (!riepilogoMesi[chiaveOrdinamento]) {
+                    riepilogoMesi[chiaveOrdinamento] = { nome: nomeMese, totale: 0 };
+                }
+                riepilogoMesi[chiaveOrdinamento].totale += s.importo;
             });
             
-            document.getElementById('totaleSpeso').innerText = formattaEuro(totale);
-            document.getElementById('numeroSpese').innerText = spese.length;
+            // Scrivi Mese Corrente
+            document.getElementById('spesaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente);
             
-            let catTop = "-";
-            let maxCatValue = 0;
-            for (let cat in categorieTotali) {
-                if(categorieTotali[cat] > maxCatValue) {
-                    maxCatValue = categorieTotali[cat];
-                    catTop = cat;
-                }
-            }
-            if(spese.length > 0) {
-                document.getElementById('categoriaTop').innerText = catTop + " (" + formattaEuro(maxCatValue) + ")";
-            } else {
-                document.getElementById('categoriaTop').innerText = "-";
-            }
-
-            let media = 0;
-            if(spese.length > 0) {
+            // Scrivi Media Cibo
+            let mediaCibo = 0;
+            if (spese.length > 0) {
                 let dateArray = spese.map(s => s.data);
                 let minDate = Math.min(...dateArray);
                 let maxDate = Math.max(...dateArray);
                 let giorniTrascorsi = ((maxDate - minDate) / 86400000) + 1; 
-                media = totale / giorniTrascorsi;
+                mediaCibo = totaleCibo / giorniTrascorsi;
             }
-            document.getElementById('mediaGiornaliera').innerText = formattaEuro(media);
+            document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
+
+            // Stampa la lista "Spesa per Mese" ordinata dal più recente al più vecchio
+            let htmlMesi = "";
+            let chiaviOrdinate = Object.keys(riepilogoMesi).sort((a, b) => b - a); // Ordine decrescente
             
+            chiaviOrdinate.forEach(chiave => {
+                let mese = riepilogoMesi[chiave];
+                htmlMesi += `
+                    <div class="mese-row">
+                        <span>${mese.nome}</span>
+                        <span style="font-weight: bold; color: #00f2fe;">${formattaEuro(mese.totale)}</span>
+                    </div>`;
+            });
+            
+            if (htmlMesi === "") htmlMesi = "<div style='color:#b0bec5; text-align:center;'>Nessun dato registrato</div>";
+            document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
+            
+            // Stampa Tabella
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${formattaData(s.data)}</td>
