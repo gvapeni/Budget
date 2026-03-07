@@ -14,10 +14,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* TEMA CHIARO ELEGANTE - RESPONSIVE (MAC + IPHONE) */
+        /* TEMA CHIARO - RESPONSIVE PERFETTO */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f5f7fa; margin: 0; padding: 20px; color: #1d1d1f; 
+            background-color: #f5f7fa; margin: 0; padding: 12px; color: #1d1d1f; 
             position: relative; overflow-x: hidden; min-height: 100vh;
         }
         
@@ -27,22 +27,17 @@
             opacity: 0.4; filter: blur(80px); z-index: -1; pointer-events: none; 
         }
         
-        h1 { text-align: center; color: #1d1d1f; font-size: 28px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.5px; }
-        h2 { text-align: left; color: #0056b3; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
+        h1 { text-align: center; color: #1d1d1f; font-size: 24px; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
+        h2 { text-align: left; color: #0056b3; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 12px; letter-spacing: -0.3px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px; }
         
-        /* GRIGLIA PRINCIPALE: Si adatta da sola! */
-        .app-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        /* GRIGLIA PRINCIPALE BASE (IPHONE) */
+        .app-container { display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 1400px; margin: 0 auto; }
         
-        /* QUANDO LO SCHERMO È GRANDE (MAC) SI DIVIDE IN DUE COLONNE */
+        /* MODIFICA PER MAC (SCHERMI GRANDI) */
         @media (min-width: 1024px) {
             body { padding: 30px; }
-            h1 { text-align: left; font-size: 32px; }
+            h1 { text-align: left; font-size: 32px; margin-bottom: 30px; }
+            h2 { font-size: 18px; margin-bottom: 15px; padding-bottom: 10px; }
             .app-container { grid-template-columns: 350px 1fr; align-items: start; gap: 30px; }
             .sidebar { position: sticky; top: 30px; }
         }
@@ -50,93 +45,98 @@
         /* PANNELLI IN VETRO CHIARO */
         .card { 
             background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            border-radius: 16px; padding: 20px; margin-bottom: 20px; 
+            border-radius: 14px; padding: 15px; margin-bottom: 15px; 
             border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        @media (min-width: 1024px) { .card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.06); } }
+        @media (min-width: 1024px) { .card { padding: 25px; border-radius: 16px; margin-bottom: 25px; } .card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.06); } }
         
         /* INPUTS */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group { margin-bottom: 12px; }
+        @media (min-width: 1024px) { .input-group { margin-bottom: 15px; } }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
         
         input[type="date"], input[type="text"], input[type="number"], select { 
-            width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; font-size: 16px; 
+            width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.9); 
+            border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 8px; font-size: 15px; 
             box-sizing: border-box; color: #1d1d1f; transition: all 0.2s; font-family: inherit; 
         }
+        @media (min-width: 1024px) { input[type="date"], input[type="text"], input[type="number"], select { padding: 12px; border-radius: 10px; font-size: 16px; } }
         input:focus, select:focus { border-color: #00f2fe; outline: none; background: #fff; }
-        @media (min-width: 1024px) { input:focus, select:focus { box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.2); } }
         
         /* BOTTONI */
         button { 
             background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
-            color: white; border: none; padding: 14px; width: 100%; 
-            border-radius: 10px; font-size: 16px; font-weight: 700; 
+            color: white; border: none; padding: 12px; width: 100%; 
+            border-radius: 8px; font-size: 15px; font-weight: 700; 
             cursor: pointer; transition: all 0.2s; 
             font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); 
         }
         button:active { transform: scale(0.98); }
-        @media (min-width: 1024px) { button:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 242, 254, 0.4); filter: brightness(1.05); } }
+        @media (min-width: 1024px) { button { padding: 14px; border-radius: 10px; font-size: 16px; } button:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 242, 254, 0.4); filter: brightness(1.05); } }
         
         .btn-grafici { background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3); margin-top: 10px; }
-        @media (min-width: 1024px) { .btn-grafici { display: none; } /* Su Mac i grafici sono sempre visibili */ }
+        @media (min-width: 1024px) { .btn-grafici { display: none; } }
         
         /* DASHBOARD GRID E ALLINEAMENTO */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (min-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }
-            .stat-box.full { grid-column: span 2; }
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; } .stat-box.full { grid-column: span 2; } }
         
         .stat-box { 
-            background: rgba(255, 255, 255, 0.5); padding: 15px; border-radius: 12px; text-align: left; 
+            background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 10px; text-align: left; 
             border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
             display: flex; flex-direction: column; justify-content: space-between;
         }
-        @media (min-width: 1024px) { .stat-box { padding: 20px; transition: transform 0.2s; } .stat-box:hover { transform: translateY(-3px); } }
+        @media (min-width: 1024px) { .stat-box { padding: 18px; border-radius: 12px; transition: transform 0.2s; } .stat-box:hover { transform: translateY(-3px); } }
         
-        .stat-top { margin-bottom: 10px; }
-        .stat-title { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-sub { font-size: 11px; color: #777; margin-top: 4px; font-weight: 500; }
+        .stat-top { margin-bottom: 8px; }
+        .stat-title { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; }
+        .stat-sub { font-size: 10px; color: #777; margin-top: 2px; font-weight: 500; }
+        @media (min-width: 1024px) { .stat-title { font-size: 11px; letter-spacing: 0.5px; } .stat-sub { font-size: 11px; margin-top: 4px; } }
         
-        .stat-value { font-size: 20px; font-weight: 800; color: #0056b3; margin-top: auto; }
-        .stat-value.big { font-size: 24px; }
-        @media (min-width: 1024px) { .stat-value { font-size: 22px; } .stat-value.big { font-size: 28px; } }
+        .stat-value { font-size: 18px; font-weight: 800; color: #0056b3; margin-top: auto; }
+        .stat-value.big { font-size: 20px; }
+        @media (min-width: 1024px) { .stat-value { font-size: 22px; } .stat-value.big { font-size: 26px; } }
         
-        .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 0; font-size: 15px; }
+        /* RIGA DEI MESI (Ottimizzata per evitare accavallamenti su iPhone) */
+        .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0; font-size: 13px; }
         .mese-row:last-child { border-bottom: none; }
+        .mese-valori { font-weight: 800; color: #0056b3; }
+        .mese-separatore { font-weight: 400; color: #888; margin: 0 3px; }
+        @media (min-width: 1024px) { .mese-row { font-size: 15px; padding: 12px 0; } .mese-separatore { margin: 0 6px; } }
         
         /* TABELLA */
-        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 5px; text-align: left; vertical-align: middle; }
-        th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
-        @media (min-width: 1024px) { table { font-size: 14px; } th, td { padding: 14px 10px; } tr { transition: background-color 0.2s; } tr:hover { background-color: rgba(0,0,0,0.02); } }
-        .importo-td { font-weight: 800; color: #0056b3; text-align: right; }
-        @media (min-width: 1024px) { .importo-td { font-size: 15px; } }
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
+        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 4px; text-align: left; vertical-align: middle; }
+        th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+        .data-td { white-space: nowrap; } /* Evita che la data vada a capo su iPhone */
+        .importo-td { font-weight: 800; color: #0056b3; text-align: right; white-space: nowrap; }
+        @media (min-width: 1024px) { table { font-size: 14px; margin-top: 10px; } th, td { padding: 14px 10px; } th { font-size: 11px; } .importo-td { font-size: 15px; } tr { transition: background-color 0.2s; } tr:hover { background-color: rgba(0,0,0,0.02); } }
         
         /* BOTTONE CESTINO */
         .delete-btn { 
             background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; 
-            padding: 8px; border-radius: 50%; cursor: pointer; 
+            padding: 6px; border-radius: 50%; cursor: pointer; 
             display: inline-flex; align-items: center; justify-content: center; 
-            transition: all 0.2s; width: 30px; height: 30px;
+            transition: all 0.2s; width: 26px; height: 26px;
         }
         .delete-btn:active { transform: scale(0.9); background: rgba(220, 53, 69, 0.3); }
-        @media (min-width: 1024px) { .delete-btn:hover { background: #dc3545; color: white; transform: scale(1.1); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); } }
-        .delete-btn svg { width: 14px; height: 14px; fill: currentColor; }
+        .delete-btn svg { width: 12px; height: 12px; fill: currentColor; }
+        @media (min-width: 1024px) { .delete-btn { padding: 8px; width: 30px; height: 30px; } .delete-btn:hover { background: #dc3545; color: white; transform: scale(1.1); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); } .delete-btn svg { width: 14px; height: 14px; } }
 
-        .cat-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 10px; font-weight: 600; color: #555; margin-top: 3px; }
+        .cat-badge { display: inline-block; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 9px; font-weight: 600; color: #555; margin-top: 2px; }
         @media (min-width: 1024px) { .cat-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; margin-top: 5px; } }
         
         /* GRAFICI */
-        .grafici-container { display: none; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; }
-        .chart-box { background: rgba(255,255,255,0.7); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
-        .chart-title { text-align: center; font-size: 14px; color: #555; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .grafici-container { display: none; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
+        .chart-box { background: rgba(255,255,255,0.7); padding: 10px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+        .chart-title { text-align: center; font-size: 12px; color: #555; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
         @media (min-width: 1024px) {
             .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; border-top: none; padding-top: 0; margin-top: 20px; }
             .chart-box { margin-bottom: 0; padding: 20px; border-radius: 14px; }
+            .chart-title { font-size: 14px; margin-bottom: 10px; letter-spacing: 1px; }
         }
     </style>
 </head>
@@ -169,15 +169,15 @@
             
             <div class="card">
                 <h2>📥 Importa Dati da Numbers</h2>
-                <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Dal Mac, vai in Numbers su <b>File > Esporta > CSV</b>, poi carica il file qui:</p>
-                <input type="file" id="csvFileInput" accept=".csv" style="padding: 12px; background: rgba(0,86,179,0.03); border: 1px dashed #0056b3; color: #0056b3; cursor: pointer; width: 100%; border-radius: 8px;">
+                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Da Numbers vai in <b>File > Esporta > CSV</b>, e carica qui:</p>
+                <input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(0,86,179,0.03); border: 1px dashed #0056b3; color: #0056b3; cursor: pointer; width: 100%; border-radius: 8px; font-size: 12px;">
             </div>
         </div>
 
         <div class="main-content">
             
             <div class="card">
-                <h2>Dashboard e Statistiche</h2>
+                <h2>Dashboard</h2>
                 <div class="stats-grid">
                     
                     <div class="stat-box">
@@ -188,32 +188,32 @@
                     </div>
                     <div class="stat-box">
                         <div class="stat-top">
-                            <div class="stat-title">Media Mese / Giorno</div>
+                            <div class="stat-title">Media / Giorno</div>
                         </div>
                         <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
                     </div>
 
-                    <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                        🛒 Focus: Categoria Cibo
+                    <div style="grid-column: span 2; text-align: center; margin-top: 6px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        🛒 Focus: Cibo
                     </div>
                     
                     <div class="stat-box">
                         <div class="stat-top">
-                            <div class="stat-title">Cibo Mese Corrente</div>
-                            <div class="stat-sub">Budget: <b>300,00 €</b></div>
+                            <div class="stat-title">Cibo Mese</div>
+                            <div class="stat-sub">Budget: <b>300€</b></div>
                         </div>
                         <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-top">
-                            <div class="stat-title">Media Cibo Globale</div>
+                            <div class="stat-title">Media Cibo</div>
                             <div class="stat-sub">Al giorno</div>
                         </div>
                         <div class="stat-value big" id="mediaCibo">0,00 €</div>
                     </div>
                     
                     <div class="stat-box full" style="margin-top: 5px;">
-                        <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
+                        <div class="stat-title" style="margin-bottom: 8px;">Storico Spesa per Mese</div>
                         <div id="spesaPerMeseLista" style="text-align: left;"></div>
                     </div>
                 </div>
@@ -223,18 +223,18 @@
                 <div class="grafici-container" id="graficiContainer">
                     <div class="chart-box">
                         <div class="chart-title">Spese per Categoria</div>
-                        <canvas id="chartCategorie" style="max-height: 250px;"></canvas>
+                        <canvas id="chartCategorie" style="max-height: 220px;"></canvas>
                     </div>
                     <div class="chart-box">
                         <div class="chart-title">Andamento Mensile</div>
-                        <canvas id="chartMesi" style="max-height: 250px;"></canvas>
+                        <canvas id="chartMesi" style="max-height: 220px;"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="card">
                 <h2>Storico Movimenti</h2>
-                <div style="overflow-x:auto;">
+                <div class="table-container">
                     <table>
                         <thead>
                             <tr>
@@ -385,8 +385,8 @@
                 htmlMesi += `
                     <div class="mese-row">
                         <span style="font-weight: 600;">${meseData.nome}</span>
-                        <span style="font-weight: 800; color: #0056b3;">
-                            ${formattaEuro(meseData.totale)} &nbsp;<span style="font-weight:400; color:#888;">|</span>&nbsp; ${formattaEuro(mediaDelMese)}
+                        <span class="mese-valori">
+                            ${formattaEuro(meseData.totale)} <span class="mese-separatore">|</span> ${formattaEuro(mediaDelMese)}
                         </span>
                     </div>`;
             });
@@ -394,7 +394,7 @@
             
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
-                    <td>${formattaData(s.data)}</td>
+                    <td class="data-td">${formattaData(s.data)}</td>
                     <td><div style="font-weight:700;">${s.descrizione}</div><div class="cat-badge">${s.categoria}</div></td>
                     <td class="importo-td">${formattaEuro(s.importo)}</td>
                     <td style="text-align:center;">
@@ -405,7 +405,7 @@
                 </tr>
             `).join('');
 
-            // Se lo schermo è grande (Mac) o se i grafici sono aperti su mobile, li disegniamo
+            // Disegna grafici se schermo grande o se aperti su mobile
             if(window.innerWidth >= 1024 || document.getElementById('graficiContainer').style.display === 'block' || document.getElementById('graficiContainer').style.display === 'grid') {
                 disegnaGrafici();
             }
@@ -447,7 +447,7 @@
                         borderWidth: 2
                     }]
                 },
-                options: { maintainAspectRatio: false, plugins: { legend: { position: window.innerWidth >= 1024 ? 'right' : 'bottom' } } }
+                options: { maintainAspectRatio: false, plugins: { legend: { position: window.innerWidth >= 1024 ? 'right' : 'bottom', labels: {font: {size: 11}} } } }
             });
 
             let sortedMesi = Object.keys(mesiData).sort();
@@ -459,7 +459,7 @@
                 type: 'bar',
                 data: {
                     labels: labelsMesi,
-                    datasets: [{ label: 'Totale Mensile', data: valsMesi, backgroundColor: 'rgba(54, 162, 235, 0.7)', borderRadius: 6 }]
+                    datasets: [{ label: 'Totale Mensile', data: valsMesi, backgroundColor: 'rgba(54, 162, 235, 0.7)', borderRadius: 4 }]
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
@@ -470,7 +470,6 @@
             aggiornaInterfaccia();
         };
 
-        // Ridisegna i grafici se giri lo schermo del telefono o allarghi la finestra del Mac
         window.addEventListener('resize', function() {
             if(window.innerWidth >= 1024) {
                 document.getElementById('graficiContainer').style.display = 'grid';
