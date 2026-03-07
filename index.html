@@ -14,11 +14,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* TEMA CHIARO ELEGANTE */
+        /* TEMA CHIARO ELEGANTE - RESPONSIVE (MAC + IPHONE) */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f5f7fa; margin: 0; padding: 15px; color: #1d1d1f; 
-            position: relative; overflow-x: hidden; 
+            background-color: #f5f7fa; margin: 0; padding: 20px; color: #1d1d1f; 
+            position: relative; overflow-x: hidden; min-height: 100vh;
         }
         
         body::before { 
@@ -27,172 +27,228 @@
             opacity: 0.4; filter: blur(80px); z-index: -1; pointer-events: none; 
         }
         
-        h1 { text-align: center; color: #1d1d1f; font-size: 28px; font-weight: 700; margin-bottom: 25px; letter-spacing: -0.5px; }
-        h2 { text-align: left; color: #0056b3; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; }
+        h1 { text-align: center; color: #1d1d1f; font-size: 28px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.5px; }
+        h2 { text-align: left; color: #0056b3; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
         
-        .card { 
-            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            border-radius: 14px; padding: 20px; margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.05); 
+        /* GRIGLIA PRINCIPALE: Si adatta da sola! */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
+        /* QUANDO LO SCHERMO È GRANDE (MAC) SI DIVIDE IN DUE COLONNE */
+        @media (min-width: 1024px) {
+            body { padding: 30px; }
+            h1 { text-align: left; font-size: 32px; }
+            .app-container { grid-template-columns: 350px 1fr; align-items: start; gap: 30px; }
+            .sidebar { position: sticky; top: 30px; }
+        }
+
+        /* PANNELLI IN VETRO CHIARO */
+        .card { 
+            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border-radius: 16px; padding: 20px; margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        @media (min-width: 1024px) { .card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.06); } }
+        
+        /* INPUTS */
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
         
         input[type="date"], input[type="text"], input[type="number"], select { 
             width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px; font-size: 16px; 
-            box-sizing: border-box; color: #1d1d1f; transition: border-color 0.3s; font-family: inherit; 
+            border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; font-size: 16px; 
+            box-sizing: border-box; color: #1d1d1f; transition: all 0.2s; font-family: inherit; 
         }
         input:focus, select:focus { border-color: #00f2fe; outline: none; background: #fff; }
+        @media (min-width: 1024px) { input:focus, select:focus { box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.2); } }
         
+        /* BOTTONI */
         button { 
             background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
             color: white; border: none; padding: 14px; width: 100%; 
             border-radius: 10px; font-size: 16px; font-weight: 700; 
-            cursor: pointer; transition: background 0.3s, transform 0.1s; 
+            cursor: pointer; transition: all 0.2s; 
             font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); 
         }
         button:active { transform: scale(0.98); }
+        @media (min-width: 1024px) { button:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 242, 254, 0.4); filter: brightness(1.05); } }
         
         .btn-grafici { background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3); margin-top: 10px; }
+        @media (min-width: 1024px) { .btn-grafici { display: none; } /* Su Mac i grafici sono sempre visibili */ }
         
-        /* DASHBOARD GRID E ALLINEAMENTO PERFETTO */
+        /* DASHBOARD GRID E ALLINEAMENTO */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-box { 
-            background: rgba(255, 255, 255, 0.5); padding: 15px; border-radius: 12px; text-align: center; 
-            border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
-            display: flex; flex-direction: column; justify-content: space-between; /* Rende elastico il box */
+        @media (min-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }
+            .stat-box.full { grid-column: span 2; }
         }
-        .stat-box.full { grid-column: span 2; display: block; }
+        
+        .stat-box { 
+            background: rgba(255, 255, 255, 0.5); padding: 15px; border-radius: 12px; text-align: left; 
+            border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        @media (min-width: 1024px) { .stat-box { padding: 20px; transition: transform 0.2s; } .stat-box:hover { transform: translateY(-3px); } }
         
         .stat-top { margin-bottom: 10px; }
-        .stat-title { font-size: 11px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-title { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-sub { font-size: 11px; color: #777; margin-top: 4px; font-weight: 500; }
         
-        .stat-value { font-size: 20px; font-weight: 700; color: #0056b3; margin-top: auto; } /* Incolla il numero in basso */
+        .stat-value { font-size: 20px; font-weight: 800; color: #0056b3; margin-top: auto; }
         .stat-value.big { font-size: 24px; }
+        @media (min-width: 1024px) { .stat-value { font-size: 22px; } .stat-value.big { font-size: 28px; } }
         
         .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 0; font-size: 15px; }
         .mese-row:last-child { border-bottom: none; }
         
+        /* TABELLA */
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 5px; text-align: left; vertical-align: middle; }
-        th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
-        .importo-td { font-weight: bold; color: #0056b3; text-align: right; }
+        th { background-color: rgba(0,0,0,0.02); color: #555; font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+        @media (min-width: 1024px) { table { font-size: 14px; } th, td { padding: 14px 10px; } tr { transition: background-color 0.2s; } tr:hover { background-color: rgba(0,0,0,0.02); } }
+        .importo-td { font-weight: 800; color: #0056b3; text-align: right; }
+        @media (min-width: 1024px) { .importo-td { font-size: 15px; } }
         
         /* BOTTONE CESTINO */
         .delete-btn { 
             background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; 
             padding: 8px; border-radius: 50%; cursor: pointer; 
             display: inline-flex; align-items: center; justify-content: center; 
-            transition: 0.2s; 
+            transition: all 0.2s; width: 30px; height: 30px;
         }
-        .delete-btn:active { background: rgba(220, 53, 69, 0.3); transform: scale(0.9); }
+        .delete-btn:active { transform: scale(0.9); background: rgba(220, 53, 69, 0.3); }
+        @media (min-width: 1024px) { .delete-btn:hover { background: #dc3545; color: white; transform: scale(1.1); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); } }
         .delete-btn svg { width: 14px; height: 14px; fill: currentColor; }
 
-        .cat-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 10px; color: #555; margin-top: 3px; }
+        .cat-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 10px; font-weight: 600; color: #555; margin-top: 3px; }
+        @media (min-width: 1024px) { .cat-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; margin-top: 5px; } }
         
-        /* Contenitore Grafici */
+        /* GRAFICI */
         .grafici-container { display: none; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; }
-        .chart-box { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+        .chart-box { background: rgba(255,255,255,0.7); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+        .chart-title { text-align: center; font-size: 14px; color: #555; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
+        @media (min-width: 1024px) {
+            .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; border-top: none; padding-top: 0; margin-top: 20px; }
+            .chart-box { margin-bottom: 0; padding: 20px; border-radius: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Gestione Spese</h1>
-
-    <div class="card">
-        <h2>Dashboard</h2>
-        <div class="stats-grid">
-            
-            <div class="stat-box">
-                <div class="stat-top">
-                    <div class="stat-title">Mese Corrente</div>
-                </div>
-                <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-top">
-                    <div class="stat-title">Media Mese / Giorno</div>
-                </div>
-                <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
-            </div>
-
-            <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                🛒 Focus: Categoria Cibo
-            </div>
-            
-            <div class="stat-box">
-                <div class="stat-top">
-                    <div class="stat-title">Cibo Mese Corrente</div>
-                    <div class="stat-sub">Budget: <b>300,00 €</b></div>
-                </div>
-                <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-top">
-                    <div class="stat-title">Media Cibo Globale</div>
-                    <div class="stat-sub">Al giorno</div>
-                </div>
-                <div class="stat-value big" id="mediaCibo">0,00 €</div>
-            </div>
-            
-            <div class="stat-box full" style="margin-top: 5px;">
-                <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
-                <div id="spesaPerMeseLista" style="text-align: left;"></div>
-            </div>
-        </div>
-
-        <button class="btn-grafici" id="btnToggleGrafici" onclick="toggleGrafici()">📊 Statistiche e Grafici</button>
+    <div class="app-container">
         
-        <div class="grafici-container" id="graficiContainer">
-            <h3 style="text-align: center; font-size: 14px; color: #555; margin-bottom: 10px; text-transform: uppercase;">Spese per Categoria</h3>
-            <div class="chart-box">
-                <canvas id="chartCategorie"></canvas>
+        <div class="sidebar">
+            <h1>Gestione Spese</h1>
+            
+            <div class="card">
+                <h2>Aggiungi Spesa</h2>
+                <div class="input-group"><label>Data</label><input type="date" id="dataSpesa"></div>
+                <div class="input-group"><label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Spesa COOP, Rifornimento..."></div>
+                <div class="input-group">
+                    <label>Categoria</label>
+                    <select id="categoriaSpesa">
+                        <option value="Cibo">Cibo (Spesa, Ristoranti)</option>
+                        <option value="Trasporti">Trasporti (Carburante, Pedaggi, Mezzi)</option>
+                        <option value="Utenze">Utenze (Bollette, Canoni)</option>
+                        <option value="Casa">Casa (Manutenzione, Arredo)</option>
+                        <option value="Spese mediche">Spese Mediche (Visite, Farmacia)</option>
+                        <option value="Svago">Svago (Tabacco, Hobby)</option>
+                        <option value="Altro">Altro</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>Importo (€)</label><input type="number" id="importoSpesa" placeholder="0.00" step="0.01"></div>
+                <button onclick="aggiungiSpesa()">Registra Spesa</button>
             </div>
-            <h3 style="text-align: center; font-size: 14px; color: #555; margin-top: 20px; margin-bottom: 10px; text-transform: uppercase;">Andamento Mensile</h3>
-            <div class="chart-box">
-                <canvas id="chartMesi"></canvas>
+            
+            <div class="card">
+                <h2>📥 Importa Dati da Numbers</h2>
+                <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Dal Mac, vai in Numbers su <b>File > Esporta > CSV</b>, poi carica il file qui:</p>
+                <input type="file" id="csvFileInput" accept=".csv" style="padding: 12px; background: rgba(0,86,179,0.03); border: 1px dashed #0056b3; color: #0056b3; cursor: pointer; width: 100%; border-radius: 8px;">
             </div>
         </div>
-    </div>
 
-    <div class="card">
-        <h2>Aggiungi Spesa</h2>
-        <div class="input-group"><label>Data</label><input type="date" id="dataSpesa"></div>
-        <div class="input-group"><label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Spesa COOP, Rifornimento..."></div>
-        <div class="input-group">
-            <label>Categoria</label>
-            <select id="categoriaSpesa">
-                <option value="Cibo">Cibo (Spesa, Ristoranti)</option>
-                <option value="Trasporti">Trasporti (Carburante, Pedaggi, Mezzi)</option>
-                <option value="Utenze">Utenze (Bollette, Canoni)</option>
-                <option value="Casa">Casa (Manutenzione, Arredo)</option>
-                <option value="Spese mediche">Spese Mediche (Visite, Farmacia)</option>
-                <option value="Svago">Svago (Tabacco, Hobby)</option>
-                <option value="Altro">Altro</option>
-            </select>
-        </div>
-        <div class="input-group"><label>Importo (€)</label><input type="number" id="importoSpesa" placeholder="0.00" step="0.01"></div>
-        <button onclick="aggiungiSpesa()">Registra Spesa</button>
-    </div>
-    
-    <div class="card">
-        <h2>📥 Importa Dati da Numbers</h2>
-        <p style="font-size: 12px; color: #555; margin-bottom: 10px;">Dal Mac, apri il file Numbers, vai su <b>File > Esporta come > CSV</b>. Poi seleziona il file generato cliccando qui sotto:</p>
-        <input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(0,86,179,0.05); border: 1px dashed #0056b3; color: #0056b3; cursor: pointer; width: 100%; border-radius: 8px;">
-    </div>
+        <div class="main-content">
+            
+            <div class="card">
+                <h2>Dashboard e Statistiche</h2>
+                <div class="stats-grid">
+                    
+                    <div class="stat-box">
+                        <div class="stat-top">
+                            <div class="stat-title">Mese Corrente</div>
+                        </div>
+                        <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-top">
+                            <div class="stat-title">Media Mese / Giorno</div>
+                        </div>
+                        <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
+                    </div>
 
-    <div class="card">
-        <h2>Storico Movimenti</h2>
-        <div style="overflow-x:auto;">
-            <table>
-                <thead>
-                    <tr><th>Data</th><th>Dettagli</th><th style="text-align: right;">Importo</th><th style="text-align: center;">Canc</th></tr>
-                </thead>
-                <tbody id="tabellaSpese"></tbody>
-            </table>
+                    <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
+                        🛒 Focus: Categoria Cibo
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-top">
+                            <div class="stat-title">Cibo Mese Corrente</div>
+                            <div class="stat-sub">Budget: <b>300,00 €</b></div>
+                        </div>
+                        <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-top">
+                            <div class="stat-title">Media Cibo Globale</div>
+                            <div class="stat-sub">Al giorno</div>
+                        </div>
+                        <div class="stat-value big" id="mediaCibo">0,00 €</div>
+                    </div>
+                    
+                    <div class="stat-box full" style="margin-top: 5px;">
+                        <div class="stat-title" style="margin-bottom: 10px;">Storico Spesa per Mese</div>
+                        <div id="spesaPerMeseLista" style="text-align: left;"></div>
+                    </div>
+                </div>
+
+                <button class="btn-grafici" id="btnToggleGrafici" onclick="toggleGrafici()">📊 Statistiche e Grafici</button>
+                
+                <div class="grafici-container" id="graficiContainer">
+                    <div class="chart-box">
+                        <div class="chart-title">Spese per Categoria</div>
+                        <canvas id="chartCategorie" style="max-height: 250px;"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-title">Andamento Mensile</div>
+                        <canvas id="chartMesi" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Storico Movimenti</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrizione</th>
+                                <th style="text-align: right;">Importo</th>
+                                <th style="text-align: center;">Canc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabellaSpese"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -219,7 +275,6 @@
         function salvaDati() { 
             localStorage.setItem('speseData', JSON.stringify(spese)); 
             aggiornaInterfaccia(); 
-            if(document.getElementById('graficiContainer').style.display === 'block') { disegnaGrafici(); }
         }
         
         function aggiungiSpesa() { 
@@ -320,12 +375,9 @@
             }
             document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
 
-            // STAMPA LISTA MESI: INVERTITI TOTALE E MEDIA CON PUNTI MIGLIAIA
             let htmlMesi = "";
             Object.keys(riepilogoMesi).sort((a, b) => b - a).forEach(chiave => {
                 let meseData = riepilogoMesi[chiave];
-                
-                // Calcolo giorni nel mese per la media
                 let giorniNelMese = new Date(meseData.anno, meseData.mese + 1, 0).getDate();
                 if (meseData.anno === annoCurr && meseData.mese === meseCurr) { giorniNelMese = giornoCurr || 1; }
                 let mediaDelMese = meseData.totale / giorniNelMese;
@@ -333,14 +385,13 @@
                 htmlMesi += `
                     <div class="mese-row">
                         <span style="font-weight: 600;">${meseData.nome}</span>
-                        <span style="font-weight: 700; color: #0056b3;">
-                            ${formattaEuro(meseData.totale)} &nbsp;|&nbsp; ${formattaEuro(mediaDelMese)}
+                        <span style="font-weight: 800; color: #0056b3;">
+                            ${formattaEuro(meseData.totale)} &nbsp;<span style="font-weight:400; color:#888;">|</span>&nbsp; ${formattaEuro(mediaDelMese)}
                         </span>
                     </div>`;
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi || "<div style='color:#b0bec5; text-align:center;'>Nessun dato registrato</div>";
             
-            // STAMPA TABELLA CON NUOVO CESTINO E PUNTI MIGLIAIA
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${formattaData(s.data)}</td>
@@ -353,6 +404,11 @@
                     </td>
                 </tr>
             `).join('');
+
+            // Se lo schermo è grande (Mac) o se i grafici sono aperti su mobile, li disegniamo
+            if(window.innerWidth >= 1024 || document.getElementById('graficiContainer').style.display === 'block' || document.getElementById('graficiContainer').style.display === 'grid') {
+                disegnaGrafici();
+            }
         }
 
         function toggleGrafici() {
@@ -388,10 +444,10 @@
                     datasets: [{
                         data: Object.values(catData),
                         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'],
-                        borderWidth: 1
+                        borderWidth: 2
                     }]
                 },
-                options: { plugins: { legend: { position: 'bottom' } } }
+                options: { maintainAspectRatio: false, plugins: { legend: { position: window.innerWidth >= 1024 ? 'right' : 'bottom' } } }
             });
 
             let sortedMesi = Object.keys(mesiData).sort();
@@ -403,9 +459,9 @@
                 type: 'bar',
                 data: {
                     labels: labelsMesi,
-                    datasets: [{ label: 'Totale Speso', data: valsMesi, backgroundColor: '#4facfe', borderRadius: 4 }]
+                    datasets: [{ label: 'Totale Mensile', data: valsMesi, backgroundColor: 'rgba(54, 162, 235, 0.7)', borderRadius: 6 }]
                 },
-                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
         }
         
@@ -413,6 +469,17 @@
             document.getElementById('dataSpesa').value = new Date().toISOString().split('T')[0];
             aggiornaInterfaccia();
         };
+
+        // Ridisegna i grafici se giri lo schermo del telefono o allarghi la finestra del Mac
+        window.addEventListener('resize', function() {
+            if(window.innerWidth >= 1024) {
+                document.getElementById('graficiContainer').style.display = 'grid';
+                disegnaGrafici();
+            } else {
+                document.getElementById('graficiContainer').style.display = 'none';
+                document.getElementById('btnToggleGrafici').innerHTML = "📊 Statistiche e Grafici";
+            }
+        });
     </script>
 </body>
 </html>
