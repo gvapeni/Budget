@@ -11,82 +11,31 @@
     
     <title>Gestione Spese</title>
     <style>
-        /* STILE GENERALE CON SFONDO SCURO ELEGANTE */
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #1a1a1c; 
-            margin: 0; 
-            padding: 15px; 
-            color: white; 
-            position: relative; 
-            overflow-x: hidden; 
-        }
-        
-        /* Sfumatura luminosa di sfondo */
-        body::before { 
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #001f2e 100%); 
-            opacity: 0.1; filter: blur(100px); z-index: -1; pointer-events: none; 
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a1c; margin: 0; padding: 15px; color: white; position: relative; overflow-x: hidden; }
+        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #001f2e 100%); opacity: 0.1; filter: blur(100px); z-index: -1; pointer-events: none; }
         
         h1 { text-align: center; color: white; font-size: 28px; font-weight: 700; margin-bottom: 25px; letter-spacing: -0.5px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
         h2 { text-align: left; color: #00f2fe; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; }
         
-        /* PANNELLI IN VETRO SATINATO */
-        .card { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            border-radius: 12px; padding: 20px; margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-        }
+        .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        /* STILE INPUT E SELECT */
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 13px; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; }
-        input[type="date"], input[type="text"], input[type="number"], select { 
-            width: 100%; padding: 12px; 
-            background: rgba(0, 0, 0, 0.15); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 8px; font-size: 16px; 
-            box-sizing: border-box; color: white; 
-            transition: border-color 0.3s; font-family: inherit;
-        }
+        input[type="date"], input[type="text"], input[type="number"], select { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.15); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 16px; box-sizing: border-box; color: white; transition: border-color 0.3s; font-family: inherit; }
         input:focus, select:focus { border-color: #00f2fe; outline: none; background: rgba(0, 0, 0, 0.25); }
         select option { background-color: #1a1a1c; color: white; }
         
-        /* PULSANTI */
-        button { 
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
-            color: white; border: none; padding: 14px; width: 100%; 
-            border-radius: 8px; font-size: 16px; font-weight: 700; 
-            cursor: pointer; transition: background 0.3s, transform 0.1s; 
-            font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3);
-        }
+        button { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.3s, transform 0.1s; font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); }
         button:active { transform: scale(0.98); }
         
-        /* DASHBOARD */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-box { 
-            background: rgba(255, 255, 255, 0.03); 
-            padding: 15px; border-radius: 10px; text-align: center; 
-            border: 1px solid rgba(0, 242, 254, 0.2); position: relative; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
+        .stat-box { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(0, 242, 254, 0.2); position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .stat-box.full { grid-column: span 2; }
-        .stat-box::before { 
-            content: ""; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; 
-            border-radius: 10px; padding: 1px; 
-            background: linear-gradient(to right, #4facfe, #00f2fe); 
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
-            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.3; 
-        }
+        .stat-box::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 10px; padding: 1px; background: linear-gradient(to right, #4facfe, #00f2fe); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.3; }
         .stat-title { font-size: 11px; color: #b0bec5; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 700; color: #00f2fe; margin-top: 5px; text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); }
         .stat-value.big { font-size: 28px; }
         
-        /* TABELLA STORICO */
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         th, td { border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding: 10px 5px; text-align: left; }
         th { background-color: rgba(0, 242, 254, 0.03); color: #00f2fe; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
@@ -150,6 +99,12 @@
         </div>
         <button onclick="aggiungiSpesa()">Registra Spesa</button>
     </div>
+    
+    <div class="card">
+        <h2>📥 Importa Dati da Numbers</h2>
+        <p style="font-size: 12px; color: #b0bec5; margin-bottom: 10px;">Dal Mac, apri il file Numbers, vai su <b>File > Esporta come > CSV</b>. Poi seleziona il file generato cliccando qui sotto:</p>
+        <input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(0,242,254,0.05); border: 1px dashed #00f2fe; color: #00f2fe; cursor: pointer; width: 100%; border-radius: 8px;">
+    </div>
 
     <div class="card">
         <h2>Storico Movimenti</h2>
@@ -169,10 +124,8 @@
     </div>
 
     <script>
-        // Recupero dei dati dalla memoria (o creazione array vuoto)
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         
-        // Formatta la data per la tabella (es. 23/02/26)
         function formattaData(dataString) { 
             if(!dataString) return "-"; 
             const d = new Date(dataString); 
@@ -181,7 +134,6 @@
                   d.getFullYear().toString().substring(2); 
         }
 
-        // Formatta l'euro (es. 10,50 €)
         function formattaEuro(numero) {
             return parseFloat(numero).toFixed(2).replace('.', ',') + " €";
         }
@@ -201,16 +153,12 @@
                 return alert("Compila tutti i campi correttamente e inserisci un importo valido!"); 
             }
             
-            // Creiamo un timestamp pulito (mezzanotte) per calcolare bene i giorni
             let pSplit = dSpesa.split('-');
             let msData = new Date(pSplit[0], pSplit[1]-1, pSplit[2]).getTime();
 
             spese.push({ data: msData, descrizione: desc, categoria: cat, importo: imp }); 
-            
-            // Ordiniamo dalla più RECENTE alla più vecchia
             spese.sort((a,b) => b.data - a.data); 
             
-            // Pulizia dei campi (lasciamo la data per comodità se deve inserire più spese lo stesso giorno)
             document.getElementById('descrizioneSpesa').value = ""; 
             document.getElementById('importoSpesa').value = ""; 
             salvaDati(); 
@@ -223,14 +171,86 @@
             }
         }
         
+        // --- MOTORE DI IMPORTAZIONE CSV INTELLIGENTE ---
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const delimiter = text.includes(';') ? ';' : ','; // Apple usa spesso il punto e virgola
+                const rows = text.split('\n');
+                let importate = 0;
+
+                for(let i = 1; i < rows.length; i++) { // Salta l'intestazione (i = 1)
+                    let row = rows[i].trim();
+                    if(!row) continue;
+
+                    // Divide le colonne evitando errori con le virgolette di Numbers
+                    let cols = [];
+                    let curVal = '';
+                    let inQuotes = false;
+                    for (let j = 0; j < row.length; j++) {
+                        let char = row[j];
+                        if (char === '"') inQuotes = !inQuotes;
+                        else if (char === delimiter && !inQuotes) { cols.push(curVal.trim()); curVal = ''; }
+                        else curVal += char;
+                    }
+                    cols.push(curVal.trim());
+                    cols = cols.map(c => c.replace(/^"|"$/g, '').trim()); // Pulisce le virgolette
+
+                    // Associa le colonne (Basato sul tuo PDF: Data, Mese, Desc, Cat, Importo)
+                    let dataRif, descRif, catRif, impRif;
+                    
+                    if (cols.length >= 5) {
+                        dataRif = cols[0]; descRif = cols[2]; catRif = cols[3]; impRif = cols[4];
+                    } else if (cols.length === 4) {
+                        dataRif = cols[0]; descRif = cols[1]; catRif = cols[2]; impRif = cols[3];
+                    } else {
+                        continue; // Salta righe invalide
+                    }
+
+                    // Parsa la data (es. 01/12/25)
+                    let dParts = dataRif.split('/');
+                    if(dParts.length === 3) {
+                        let anno = parseInt(dParts[2]);
+                        if(anno < 100) anno += 2000;
+                        let mese = parseInt(dParts[1]) - 1;
+                        let giorno = parseInt(dParts[0]);
+                        let msData = new Date(anno, mese, giorno).getTime();
+
+                        // Parsa l'importo (es. 2,90 € -> 2.90)
+                        let pulito = impRif.replace('€', '').replace(/\s/g, ''); 
+                        pulito = pulito.replace(/\./g, '').replace(',', '.'); // Adatta le virgole italiane ai punti inglesi
+                        let impNum = parseFloat(pulito);
+
+                        // Se i dati sono corretti, li aggiunge
+                        if(!isNaN(msData) && !isNaN(impNum)) {
+                            spese.push({ data: msData, descrizione: descRif, categoria: catRif, importo: impNum });
+                            importate++;
+                        }
+                    }
+                }
+
+                if(importate > 0) {
+                    spese.sort((a,b) => b.data - a.data); // Riordina in automatico
+                    salvaDati();
+                    alert("✅ Successo! Hai importato " + importate + " spese dal tuo file Numbers.");
+                    document.getElementById('csvFileInput').value = ""; // Svuota l'input
+                } else {
+                    alert("❌ Errore: Nessuna spesa trovata. Assicurati di aver esportato correttamente il file in CSV.");
+                }
+            };
+            reader.readAsText(file);
+        });
+        
         function aggiornaInterfaccia() {
-            // 1. Calcolo Totale e N. Spese
             let totale = 0;
             let categorieTotali = {};
             
             spese.forEach(s => {
                 totale += s.importo;
-                // Raggruppa per categorie per trovare la più costosa
                 if(categorieTotali[s.categoria]) {
                     categorieTotali[s.categoria] += s.importo;
                 } else {
@@ -241,7 +261,6 @@
             document.getElementById('totaleSpeso').innerText = formattaEuro(totale);
             document.getElementById('numeroSpese').innerText = spese.length;
             
-            // 2. Calcolo Categoria Top
             let catTop = "-";
             let maxCatValue = 0;
             for (let cat in categorieTotali) {
@@ -256,20 +275,16 @@
                 document.getElementById('categoriaTop').innerText = "-";
             }
 
-            // 3. Calcolo Media Giornaliera
             let media = 0;
             if(spese.length > 0) {
                 let dateArray = spese.map(s => s.data);
                 let minDate = Math.min(...dateArray);
                 let maxDate = Math.max(...dateArray);
-                
-                // Calcola i giorni totali (+1 perché se inizio e fine sono lo stesso giorno, è 1 giorno intero)
                 let giorniTrascorsi = ((maxDate - minDate) / 86400000) + 1; 
                 media = totale / giorniTrascorsi;
             }
             document.getElementById('mediaGiornaliera').innerText = formattaEuro(media);
             
-            // 4. Stampa Tabella
             document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${formattaData(s.data)}</td>
@@ -283,7 +298,6 @@
             `).join('');
         }
         
-        // Imposta la data di oggi come default all'apertura
         window.onload = function() {
             let oggi = new Date().toISOString().split('T')[0];
             document.getElementById('dataSpesa').value = oggi;
