@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-title" content="App Spese">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>App Spese Pro</title>
+    <title>App Spese 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -64,7 +64,6 @@
             padding: 15px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer;
         }
 
-        /* DASHBOARD - OTTIMIZZATA PER IPHONE */
         .stats-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
         @media (min-width: 768px) {
@@ -81,7 +80,6 @@
         .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; text-align: left; }
         .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); text-align: center; width: 100%; }
 
-        /* STORICO MESI */
         .storico-mesi-container { width: 100%; }
         .mese-row { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -148,12 +146,6 @@
                         <div id="spesaPerMeseLista" class="storico-mesi-container"></div>
                     </div>
                 </div>
-                <div class="card" id="graficiCard" style="display:none; margin-top:20px; padding:10px;">
-                   <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <canvas id="chartCategorie"></canvas>
-                        <canvas id="chartMesi"></canvas>
-                   </div>
-                </div>
             </div>
 
             <div class="card">
@@ -183,9 +175,14 @@
             
             spese.forEach(s => {
                 const d = new Date(s.data);
+                if (isNaN(d.getTime())) return;
+
                 const chiave = d.getFullYear() + "-" + d.getMonth();
                 if(d.getMonth() === oggi.getMonth() && d.getFullYear() === oggi.getFullYear()) meseCorr += s.importo;
-                if(!riepilogo[chiave]) riepilogo[chiave] = { totale: 0, nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), d: d };
+                
+                if(!riepilogo[chiave]) {
+                    riepilogo[chiave] = { totale: 0, nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), timestamp: d.getTime() };
+                }
                 riepilogo[chiave].totale += s.importo;
             });
 
@@ -193,9 +190,13 @@
             document.getElementById('mediaMeseCorrente').innerText = formattaEuro(meseCorr / oggi.getDate());
 
             let htmlMesi = "";
-            Object.keys(riepilogo).sort((a,b) => new Date(riepilogo[b].d) - new Date(riepilogo[a].d)).forEach(k => {
+            Object.keys(riepilogo).sort((a,b) => riepilogo[b].timestamp - riepilogo[a].timestamp).forEach(k => {
                 const m = riepilogo[k];
-                const giorni = (m.d.getMonth() === oggi.getMonth()) ? oggi.getDate() : new Date(m.d.getFullYear(), m.d.getMonth()+1, 0).getDate();
+                const dMese = new Date(m.timestamp);
+                const giorni = (dMese.getMonth() === oggi.getMonth() && dMese.getFullYear() === oggi.getFullYear()) 
+                                ? oggi.getDate() 
+                                : new Date(dMese.getFullYear(), dMese.getMonth() + 1, 0).getDate();
+                
                 htmlMesi += `<div class="mese-row">
                     <span class="mese-nome">${m.nome}</span>
                     <span class="mese-cifre">${formattaEuro(m.totale)} <span style="color:#ddd;font-weight:400">|</span> ${formattaEuro(m.totale/giorni)}</span>
@@ -216,7 +217,7 @@
                 </tr>`).join('');
         }
 
-        // MOTORE DI IMPORTAZIONE UNIVERSALE (FIX IPHONE)
+        // --- FIX DATA 2026 ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -227,34 +228,27 @@
                 let imported = 0;
 
                 lines.forEach((line, index) => {
-                    if (index === 0 || line.trim() === "") return; // Salta intestazione e righe vuote
-
-                    // Prova a capire se usa virgola o punto e virgola
+                    if (index === 0 || line.trim() === "") return;
                     const delimiter = line.includes(';') ? ';' : ',';
                     const cols = line.split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
 
                     if (cols.length >= 4) {
-                        // Gestione Data
                         const dateStr = cols[0];
                         const dateParts = dateStr.split('/');
                         if (dateParts.length === 3) {
                             let day = parseInt(dateParts[0]);
                             let month = parseInt(dateParts[1]) - 1;
                             let year = parseInt(dateParts[2]);
-                            if (year < 100) year += 2000;
-                            const d = new Date(year, month, day);
+                            
+                            // Se l'anno è scritto come 26 (due cifre), lo forziamo a 2026
+                            if (year < 100) year += 2000; 
 
-                            // Gestione Importo (pulisce € e converte virgola in punto)
+                            const d = new Date(year, month, day);
                             let rawImp = cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.');
                             const imp = parseFloat(rawImp);
 
                             if (!isNaN(d.getTime()) && !isNaN(imp)) {
-                                spese.push({
-                                    data: d.getTime(),
-                                    descrizione: cols[1],
-                                    categoria: cols[2] || "Altro",
-                                    importo: imp
-                                });
+                                spese.push({ data: d.getTime(), descrizione: cols[1], categoria: cols[2] || "Altro", importo: imp });
                                 imported++;
                             }
                         }
@@ -265,21 +259,21 @@
                     spese.sort((a,b) => b.data - a.data);
                     localStorage.setItem('speseData', JSON.stringify(spese));
                     aggiornaUI();
-                    alert("Importate " + imported + " spese con successo!");
-                } else {
-                    alert("Non ho trovato dati validi. Controlla che il file CSV sia corretto.");
+                    alert("Importate " + imported + " spese!");
                 }
             };
             reader.readAsText(file);
         });
 
         function aggiungiSpesa() {
-            const d = document.getElementById('dataSpesa').value;
+            const dInput = document.getElementById('dataSpesa').value;
             const desc = document.getElementById('descrizioneSpesa').value;
             const cat = document.getElementById('categoriaSpesa').value;
             const imp = parseFloat(document.getElementById('importoSpesa').value);
-            if(!d || !desc || isNaN(imp)) return alert("Dati incompleti!");
-            spese.push({ data: new Date(d).getTime(), descrizione: desc, categoria: cat, importo: imp });
+            if(!dInput || !desc || isNaN(imp)) return alert("Dati incompleti!");
+            
+            const d = new Date(dInput);
+            spese.push({ data: d.getTime(), descrizione: desc, categoria: cat, importo: imp });
             spese.sort((a,b) => b.data - a.data);
             localStorage.setItem('speseData', JSON.stringify(spese));
             aggiornaUI();
@@ -288,7 +282,9 @@
         function eliminaSpesa(i) { if(confirm("Cancellare?")) { spese.splice(i,1); localStorage.setItem('speseData', JSON.stringify(spese)); aggiornaUI(); } }
 
         window.onload = () => { 
-            document.getElementById('dataSpesa').valueAsDate = new Date(); 
+            const d = new Date();
+            // Forza l'input data sul 2026 se necessario
+            document.getElementById('dataSpesa').valueAsDate = d; 
             aggiornaUI(); 
         };
     </script>
