@@ -5,35 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="App Spese">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
-    <link rel="icon" href="https://img.icons8.com/color/180/wallet.png">
     
     <title>Gestione Spese</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f5f7fa; margin: 0; padding: 12px; color: #1d1d1f; 
-            position: relative; overflow-x: hidden; min-height: 100vh;
         }
-        
-        body::before { 
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); 
-            opacity: 0.4; filter: blur(80px); z-index: -1; pointer-events: none; 
-        }
-        
-        h1 { text-align: center; color: #1d1d1f; font-size: 24px; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
-        h2 { text-align: left; color: #0056b3; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px; }
         
         .app-container { display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 1400px; margin: 0 auto; }
         
         @media (min-width: 1024px) {
             body { padding: 30px; }
-            h1 { text-align: left; font-size: 32px; margin-bottom: 30px; }
             .app-container { grid-template-columns: 350px 1fr; align-items: start; gap: 30px; }
             .sidebar { position: sticky; top: 30px; }
         }
@@ -44,71 +30,62 @@
             border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
         }
 
-        label { font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; display: block; margin-bottom: 5px; }
-
-        input[type="date"], input[type="text"], input[type="number"], select { 
+        input, select { 
             width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.9); 
             border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 8px; font-size: 16px; 
-            box-sizing: border-box; color: #1d1d1f; font-family: inherit; margin-bottom: 10px;
+            box-sizing: border-box; margin-bottom: 10px;
         }
         
         button { 
             background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
             color: white; border: none; padding: 12px; width: 100%; 
-            border-radius: 8px; font-size: 15px; font-weight: 700; 
-            cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); 
+            border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
         }
 
+        /* DASHBOARD GRID */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; } .stat-box.full { grid-column: span 2; } }
         
         .stat-box { 
             background: rgba(255, 255, 255, 0.5); padding: 12px; border-radius: 12px; 
-            border: 1px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column;
         }
         
-        .stat-title { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; }
-        .stat-value { font-size: 19px; font-weight: 800; color: #0056b3; margin-top: 5px; }
+        /* FIX: STORICO MESI - COLONNA SINGOLA A TUTTA LARGHEZZA */
+        .stat-box.full { 
+            grid-column: span 2; 
+            display: block; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
 
-        /* FIX: STORICO MESI A TUTTA LARGHEZZA */
         .storico-mesi-container { 
             display: flex; 
             flex-direction: column; 
             width: 100%; 
-            margin-top: 5px;
+            margin-top: 10px;
         }
+
         .mese-row { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             border-bottom: 1px solid rgba(0,0,0,0.05); 
             padding: 12px 0;
-            width: 100%;
+            width: 100%; /* Forza l'espansione orizzontale */
         }
-        .mese-nome { 
-            font-weight: 600; 
-            font-size: 15px; 
-            color: #1d1d1f;
-        }
-        .mese-cifre { 
-            font-weight: 800; 
-            color: #0056b3; 
-            font-size: 15px; 
-            text-align: right;
-            white-space: nowrap;
-        }
+
+        .mese-nome { font-weight: 600; font-size: 15px; color: #1d1d1f; }
+        .mese-cifre { font-weight: 800; color: #0056b3; font-size: 15px; white-space: nowrap; }
         .mese-sep { font-weight: 400; color: #bbb; margin: 0 4px; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
-        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 4px; text-align: left; }
+        .stat-title { font-size: 10px; color: #555; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-size: 19px; font-weight: 800; color: #0056b3; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 4px; }
         .importo-td { font-weight: 800; color: #0056b3; text-align: right; }
         
-        .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; padding: 6px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .cat-badge { display: inline-block; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,0.05); font-size: 9px; font-weight: 600; color: #555; }
-
-        .grafici-container { display: none; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
-        @media (min-width: 1024px) { .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; border-top: none; } }
-        .chart-box { background: rgba(255,255,255,0.7); padding: 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); }
+        .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none; padding: 6px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -118,25 +95,19 @@
             <h1>Gestione Spese</h1>
             <div class="card">
                 <h2>Aggiungi Spesa</h2>
-                <label>Data</label><input type="date" id="dataSpesa">
-                <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Spesa COOP...">
-                <label>Categoria</label>
+                <input type="date" id="dataSpesa">
+                <input type="text" id="descrizioneSpesa" placeholder="Descrizione...">
                 <select id="categoriaSpesa">
                     <option value="Cibo">Cibo</option>
                     <option value="Trasporti">Trasporti</option>
-                    <option value="Utenze">Utenze</option>
-                    <option value="Casa">Casa</option>
-                    <option value="Salute">Salute</option>
-                    <option value="Svago">Svago</option>
                     <option value="Altro">Altro</option>
                 </select>
-                <label>Importo (€)</label><input type="number" id="importoSpesa" placeholder="0.00" step="0.01">
+                <input type="number" id="importoSpesa" placeholder="0.00" step="0.01">
                 <button onclick="aggiungiSpesa()">Registra Spesa</button>
             </div>
-
             <div class="card">
                 <h2>📥 Importa da Numbers</h2>
-                <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px; width: 100%;">
+                <input type="file" id="csvFileInput" accept=".csv">
             </div>
         </div>
 
@@ -153,25 +124,18 @@
                         <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
                     </div>
                     <div class="stat-box full">
-                        <div class="stat-title" style="margin-bottom: 5px;">STORICO SPESA PER MESE</div>
+                        <div class="stat-title">STORICO SPESA PER MESE</div>
                         <div id="spesaPerMeseLista" class="storico-mesi-container"></div>
                     </div>
-                </div>
-                <button style="margin-top:15px; background: #6a11cb;" onclick="toggleGrafici()" id="btnToggleGrafici">📊 Mostra Grafici</button>
-                <div class="grafici-container" id="graficiContainer">
-                    <div class="chart-box"><canvas id="chartCategorie"></canvas></div>
-                    <div class="chart-box"><canvas id="chartMesi"></canvas></div>
                 </div>
             </div>
 
             <div class="card">
                 <h2>Ultimi Movimenti</h2>
-                <div style="overflow-x:auto;">
-                    <table>
-                        <thead><tr><th>Data</th><th>Dettagli</th><th style="text-align:right;">Importo</th><th></th></tr></thead>
-                        <tbody id="tabellaSpese"></tbody>
-                    </table>
-                </div>
+                <table id="tabellaSpese">
+                    <thead><tr><th>Data</th><th>Dettagli</th><th style="text-align:right;">Importo</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -179,60 +143,8 @@
     <script>
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        
-        let chartCatInstance = null;
-        let chartMesiInstance = null;
 
-        function formattaEuro(n) {
-            return parseFloat(n).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-        }
-
-        function salvaDati() {
-            localStorage.setItem('speseData', JSON.stringify(spese));
-            aggiornaUI();
-        }
-
-        function aggiungiSpesa() {
-            const d = document.getElementById('dataSpesa').value;
-            const desc = document.getElementById('descrizioneSpesa').value;
-            const cat = document.getElementById('categoriaSpesa').value;
-            const imp = parseFloat(document.getElementById('importoSpesa').value);
-            if(!d || !desc || isNaN(imp)) return alert("Inserisci tutti i dati!");
-            spese.push({ data: new Date(d).getTime(), descrizione: desc, categoria: cat, importo: imp });
-            spese.sort((a,b) => b.data - a.data);
-            salvaDati();
-        }
-
-        function eliminaSpesa(i) {
-            if(confirm("Eliminare questa spesa?")) { spese.splice(i,1); salvaDati(); }
-        }
-
-        document.getElementById('csvFileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const text = event.target.result;
-                const rows = text.split('\n');
-                let count = 0;
-                for(let i = 1; i < rows.length; i++) {
-                    const cols = rows[i].split(/[;,]/);
-                    if(cols.length >= 4) {
-                        const dParts = cols[0].split('/');
-                        const dataMs = new Date(dParts[2], dParts[1]-1, dParts[0]).getTime();
-                        const imp = parseFloat(cols[cols.length-1].replace('€','').replace(',','.').trim());
-                        if(!isNaN(dataMs) && !isNaN(imp)) {
-                            spese.push({ data: dataMs, descrizione: cols[1], categoria: cols[2], importo: imp });
-                            count++;
-                        }
-                    }
-                }
-                spese.sort((a,b) => b.data - a.data);
-                salvaDati();
-                alert("Importate " + count + " spese!");
-            };
-            reader.readAsText(file);
-        });
+        function formattaEuro(n) { return parseFloat(n).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; }
 
         function aggiornaUI() {
             const oggi = new Date();
@@ -261,53 +173,30 @@
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
 
-            document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
+            document.querySelector('#tabellaSpese tbody').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td>${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
-                    <td><div style="font-weight:700;">${s.descrizione}</div><div class="cat-badge">${s.categoria}</div></td>
+                    <td><b>${s.descrizione}</b><br><small>${s.categoria}</small></td>
                     <td class="importo-td">${formattaEuro(s.importo)}</td>
-                    <td style="text-align:center;"><button class="delete-btn" onclick="eliminaSpesa(${i})">&times;</button></td>
+                    <td><button class="delete-btn" onclick="eliminaSpesa(${i})">×</button></td>
                 </tr>`).join('');
-            
-            if(window.innerWidth >= 1024 || document.getElementById('graficiContainer').style.display === 'block') disegnaGrafici();
         }
 
-        function toggleGrafici() {
-            const g = document.getElementById('graficiContainer');
-            const b = document.getElementById('btnToggleGrafici');
-            const isHidden = g.style.display === 'none' || g.style.display === '';
-            g.style.display = isHidden ? 'block' : 'none';
-            b.innerText = isHidden ? "📊 Nascondi Grafici" : "📊 Mostra Grafici";
-            if(isHidden) disegnaGrafici();
-        }
-
-        function disegnaGrafici() {
-            if(chartCatInstance) chartCatInstance.destroy();
-            if(chartMesiInstance) chartMesiInstance.destroy();
-
-            let catData = {}; let mesiData = {};
-            spese.forEach(s => {
-                catData[s.categoria] = (catData[s.categoria] || 0) + s.importo;
-                const d = new Date(s.data);
-                const k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
-                mesiData[k] = (mesiData[k] || 0) + s.importo;
-            });
-
-            chartCatInstance = new Chart(document.getElementById('chartCategorie'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'] }] }
-            });
-
-            chartMesiInstance = new Chart(document.getElementById('chartMesi'), {
-                type: 'bar',
-                data: { labels: Object.keys(mesiData), datasets: [{ label: 'Spesa Mensile', data: Object.values(mesiData), backgroundColor: '#4facfe' }] }
-            });
-        }
-
-        window.onload = () => {
-            document.getElementById('dataSpesa').valueAsDate = new Date();
+        function aggiungiSpesa() {
+            const d = document.getElementById('dataSpesa').value;
+            const desc = document.getElementById('descrizioneSpesa').value;
+            const cat = document.getElementById('categoriaSpesa').value;
+            const imp = parseFloat(document.getElementById('importoSpesa').value);
+            if(!d || !desc || isNaN(imp)) return alert("Dati mancanti!");
+            spese.push({ data: new Date(d).getTime(), descrizione: desc, categoria: cat, importo: imp });
+            spese.sort((a,b) => b.data - a.data);
+            localStorage.setItem('speseData', JSON.stringify(spese));
             aggiornaUI();
-        };
+        }
+
+        function eliminaSpesa(i) { if(confirm("Eliminare?")) { spese.splice(i,1); localStorage.setItem('speseData', JSON.stringify(spese)); aggiornaUI(); } }
+
+        window.onload = () => { document.getElementById('dataSpesa').valueAsDate = new Date(); aggiornaUI(); };
     </script>
 </body>
 </html>
