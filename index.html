@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="App Spese">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
+    <link rel="icon" href="https://img.icons8.com/color/180/wallet.png">
+    
+    <title>Gestione Spese</title>
+    <style>
+        /* STILE GENERALE CON SFONDO SCURO ELEGANTE */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #1a1a1c; 
+            margin: 0; 
+            padding: 15px; 
+            color: white; 
+            position: relative; 
+            overflow-x: hidden; 
+        }
+        
+        /* Sfumatura luminosa di sfondo */
+        body::before { 
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #001f2e 100%); 
+            opacity: 0.1; filter: blur(100px); z-index: -1; pointer-events: none; 
+        }
+        
+        h1 { text-align: center; color: white; font-size: 28px; font-weight: 700; margin-bottom: 25px; letter-spacing: -0.5px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+        h2 { text-align: left; color: #00f2fe; font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.3px; }
+        
+        /* PANNELLI IN VETRO SATINATO */
+        .card { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border-radius: 12px; padding: 20px; margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        
+        /* STILE INPUT E SELECT */
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 13px; color: #b0bec5; text-transform: uppercase; letter-spacing: 0.5px; }
+        input[type="date"], input[type="text"], input[type="number"], select { 
+            width: 100%; padding: 12px; 
+            background: rgba(0, 0, 0, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 8px; font-size: 16px; 
+            box-sizing: border-box; color: white; 
+            transition: border-color 0.3s; font-family: inherit;
+        }
+        input:focus, select:focus { border-color: #00f2fe; outline: none; background: rgba(0, 0, 0, 0.25); }
+        select option { background-color: #1a1a1c; color: white; }
+        
+        /* PULSANTI */
+        button { 
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
+            color: white; border: none; padding: 14px; width: 100%; 
+            border-radius: 8px; font-size: 16px; font-weight: 700; 
+            cursor: pointer; transition: background 0.3s, transform 0.1s; 
+            font-family: inherit; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3);
+        }
+        button:active { transform: scale(0.98); }
+        
+        /* DASHBOARD */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-box { 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 15px; border-radius: 10px; text-align: center; 
+            border: 1px solid rgba(0, 242, 254, 0.2); position: relative; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .stat-box.full { grid-column: span 2; }
+        .stat-box::before { 
+            content: ""; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; 
+            border-radius: 10px; padding: 1px; 
+            background: linear-gradient(to right, #4facfe, #00f2fe); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.3; 
+        }
+        .stat-title { font-size: 11px; color: #b0bec5; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 20px; font-weight: 700; color: #00f2fe; margin-top: 5px; text-shadow: 0 0 5px rgba(0, 242, 254, 0.5); }
+        .stat-value.big { font-size: 28px; }
+        
+        /* TABELLA STORICO */
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        th, td { border-bottom: 1px solid rgba(0, 242, 254, 0.1); padding: 10px 5px; text-align: left; }
+        th { background-color: rgba(0, 242, 254, 0.03); color: #00f2fe; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+        .importo-td { font-weight: bold; color: #00f2fe; text-align: right; }
+        .delete-btn { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid #dc3545; padding: 4px 6px; font-size: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .delete-btn:active { background: rgba(220, 53, 69, 0.3); }
+        .cat-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); font-size: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestione Spese</h1>
+
+    <div class="card">
+        <h2>Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-box full">
+                <div class="stat-title">Spesa Totale</div>
+                <div class="stat-value big" id="totaleSpeso">0,00 €</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-title">Media Giornaliera</div>
+                <div class="stat-value" id="mediaGiornaliera">0,00 €</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-title">N° Movimenti</div>
+                <div class="stat-value" id="numeroSpese">0</div>
+            </div>
+            <div class="stat-box full">
+                <div class="stat-title">Categoria Più Costosa</div>
+                <div class="stat-value" id="categoriaTop">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Aggiungi Spesa</h2>
+        <div class="input-group">
+            <label>Data</label>
+            <input type="date" id="dataSpesa">
+        </div>
+        <div class="input-group">
+            <label>Descrizione</label>
+            <input type="text" id="descrizioneSpesa" placeholder="Es. Spesa COOP, Rifornimento...">
+        </div>
+        <div class="input-group">
+            <label>Categoria</label>
+            <select id="categoriaSpesa">
+                <option value="Cibo">Cibo (Spesa, Ristoranti)</option>
+                <option value="Trasporti">Trasporti (Carburante, Pedaggi, Mezzi)</option>
+                <option value="Utenze">Utenze (Bollette, Canoni)</option>
+                <option value="Casa">Casa (Manutenzione, Arredo)</option>
+                <option value="Spese mediche">Spese Mediche (Visite, Farmacia)</option>
+                <option value="Svago">Svago (Tabacco, Hobby)</option>
+                <option value="Altro">Altro</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Importo (€)</label>
+            <input type="number" id="importoSpesa" placeholder="0.00" step="0.01">
+        </div>
+        <button onclick="aggiungiSpesa()">Registra Spesa</button>
+    </div>
+
+    <div class="card">
+        <h2>Storico Movimenti</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Dettagli</th>
+                        <th style="text-align: right;">Importo</th>
+                        <th>X</th>
+                    </tr>
+                </thead>
+                <tbody id="tabellaSpese"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Recupero dei dati dalla memoria (o creazione array vuoto)
+        let spese = JSON.parse(localStorage.getItem('speseData')) || [];
+        
+        // Formatta la data per la tabella (es. 23/02/26)
+        function formattaData(dataString) { 
+            if(!dataString) return "-"; 
+            const d = new Date(dataString); 
+            return d.getDate().toString().padStart(2,'0') + "/" + 
+                  (d.getMonth()+1).toString().padStart(2,'0') + "/" + 
+                  d.getFullYear().toString().substring(2); 
+        }
+
+        // Formatta l'euro (es. 10,50 €)
+        function formattaEuro(numero) {
+            return parseFloat(numero).toFixed(2).replace('.', ',') + " €";
+        }
+        
+        function salvaDati() { 
+            localStorage.setItem('speseData', JSON.stringify(spese)); 
+            aggiornaInterfaccia(); 
+        }
+        
+        function aggiungiSpesa() { 
+            const dSpesa = document.getElementById('dataSpesa').value; 
+            const desc = document.getElementById('descrizioneSpesa').value.trim();
+            const cat = document.getElementById('categoriaSpesa').value;
+            const imp = parseFloat(document.getElementById('importoSpesa').value); 
+            
+            if(!dSpesa || desc === "" || isNaN(imp) || imp <= 0) {
+                return alert("Compila tutti i campi correttamente e inserisci un importo valido!"); 
+            }
+            
+            // Creiamo un timestamp pulito (mezzanotte) per calcolare bene i giorni
+            let pSplit = dSpesa.split('-');
+            let msData = new Date(pSplit[0], pSplit[1]-1, pSplit[2]).getTime();
+
+            spese.push({ data: msData, descrizione: desc, categoria: cat, importo: imp }); 
+            
+            // Ordiniamo dalla più RECENTE alla più vecchia
+            spese.sort((a,b) => b.data - a.data); 
+            
+            // Pulizia dei campi (lasciamo la data per comodità se deve inserire più spese lo stesso giorno)
+            document.getElementById('descrizioneSpesa').value = ""; 
+            document.getElementById('importoSpesa').value = ""; 
+            salvaDati(); 
+        }
+        
+        function eliminaSpesa(index) { 
+            if(confirm("Sei sicuro di voler eliminare questa spesa?")) {
+                spese.splice(index, 1); 
+                salvaDati(); 
+            }
+        }
+        
+        function aggiornaInterfaccia() {
+            // 1. Calcolo Totale e N. Spese
+            let totale = 0;
+            let categorieTotali = {};
+            
+            spese.forEach(s => {
+                totale += s.importo;
+                // Raggruppa per categorie per trovare la più costosa
+                if(categorieTotali[s.categoria]) {
+                    categorieTotali[s.categoria] += s.importo;
+                } else {
+                    categorieTotali[s.categoria] = s.importo;
+                }
+            });
+            
+            document.getElementById('totaleSpeso').innerText = formattaEuro(totale);
+            document.getElementById('numeroSpese').innerText = spese.length;
+            
+            // 2. Calcolo Categoria Top
+            let catTop = "-";
+            let maxCatValue = 0;
+            for (let cat in categorieTotali) {
+                if(categorieTotali[cat] > maxCatValue) {
+                    maxCatValue = categorieTotali[cat];
+                    catTop = cat;
+                }
+            }
+            if(spese.length > 0) {
+                document.getElementById('categoriaTop').innerText = catTop + " (" + formattaEuro(maxCatValue) + ")";
+            } else {
+                document.getElementById('categoriaTop').innerText = "-";
+            }
+
+            // 3. Calcolo Media Giornaliera
+            let media = 0;
+            if(spese.length > 0) {
+                let dateArray = spese.map(s => s.data);
+                let minDate = Math.min(...dateArray);
+                let maxDate = Math.max(...dateArray);
+                
+                // Calcola i giorni totali (+1 perché se inizio e fine sono lo stesso giorno, è 1 giorno intero)
+                let giorniTrascorsi = ((maxDate - minDate) / 86400000) + 1; 
+                media = totale / giorniTrascorsi;
+            }
+            document.getElementById('mediaGiornaliera').innerText = formattaEuro(media);
+            
+            // 4. Stampa Tabella
+            document.getElementById('tabellaSpese').innerHTML = spese.map((s, i) => `
+                <tr>
+                    <td>${formattaData(s.data)}</td>
+                    <td>
+                        <div style="font-weight:bold;">${s.descrizione}</div>
+                        <div class="cat-badge">${s.categoria}</div>
+                    </td>
+                    <td class="importo-td">${formattaEuro(s.importo)}</td>
+                    <td style="text-align:center;"><button class="delete-btn" onclick="eliminaSpesa(${i})">X</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        // Imposta la data di oggi come default all'apertura
+        window.onload = function() {
+            let oggi = new Date().toISOString().split('T')[0];
+            document.getElementById('dataSpesa').value = oggi;
+            aggiornaInterfaccia();
+        };
+    </script>
+</body>
+</html>
