@@ -97,27 +97,29 @@
             <div class="stat-box">
                 <div class="stat-title">Mese Corrente</div>
                 <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
-                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">
-                    Budget: <b>300,00 €</b>
-                </div>
             </div>
             <div class="stat-box">
-                <div class="stat-title">Spesa Totale (Finora)</div>
-                <div class="stat-value big" id="totaleAssoluto">0,00 €</div>
-            </div>
-            
-            <div class="stat-box full" style="margin-top: 5px;">
                 <div class="stat-title">Media Mese / Giorno</div>
-                <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
+                <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
             </div>
 
             <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
                 🛒 Focus: Categoria Cibo
             </div>
             
-            <div class="stat-box full">
-                <div class="stat-title">Media Cibo / Giorno</div>
-                <div class="stat-value" id="mediaCibo">0,00 €</div>
+            <div class="stat-box">
+                <div class="stat-title">Cibo Mese Corrente</div>
+                <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
+                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">
+                    Budget: <b>300,00 €</b>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-title">Media Cibo Globale</div>
+                <div class="stat-value big" id="mediaCibo">0,00 €</div>
+                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">
+                    Al giorno
+                </div>
             </div>
             
             <div class="stat-box full" style="margin-top: 5px;">
@@ -300,7 +302,7 @@
         function aggiornaInterfaccia() {
             let spesaMeseCorrente = 0;
             let totaleCibo = 0;
-            let totaleAssoluto = 0;
+            let ciboMeseCorrente = 0;
             let riepilogoMesi = {};
 
             const oggi = new Date();
@@ -313,20 +315,20 @@
             spese.forEach(s => {
                 const d = new Date(s.data);
                 
-                // 1. Somma Assoluta Finora
-                totaleAssoluto += s.importo;
-
-                // 2. Calcolo Mese Corrente
+                // 1. Calcolo Mese Corrente Generale e Cibo
                 if (d.getMonth() === meseCurr && d.getFullYear() === annoCurr) {
                     spesaMeseCorrente += s.importo;
+                    if (s.categoria === "Cibo") {
+                        ciboMeseCorrente += s.importo;
+                    }
                 }
 
-                // 3. Calcolo Cibo Totale
+                // 2. Calcolo Cibo Globale Totale
                 if (s.categoria === "Cibo") {
                     totaleCibo += s.importo;
                 }
 
-                // 4. Raggruppamento Mesi
+                // 3. Raggruppamento Mesi
                 let chiaveOrdinamento = d.getFullYear() * 100 + d.getMonth(); 
                 let nomeMese = nomiMesi[d.getMonth()] + " " + d.getFullYear();
 
@@ -336,23 +338,22 @@
                 riepilogoMesi[chiaveOrdinamento].totale += s.importo;
             });
             
-            // --- GESTIONE MESE CORRENTE E BUDGET 300€ ---
-            let boxMese = document.getElementById('spesaMeseCorrente');
-            boxMese.innerText = formattaEuro(spesaMeseCorrente);
+            // --- GESTIONE MESE CORRENTE E MEDIA ---
+            document.getElementById('spesaMeseCorrente').innerText = formattaEuro(spesaMeseCorrente);
             
-            // Se supera i 300€ diventa ROSSO
-            if(spesaMeseCorrente > 300) {
-                boxMese.style.color = "#dc3545"; 
-            } else {
-                boxMese.style.color = "#0056b3"; 
-            }
-
-            // --- GESTIONE TOTALE ASSOLUTO ---
-            document.getElementById('totaleAssoluto').innerText = formattaEuro(totaleAssoluto);
-
-            // --- MEDIA MESE CORRENTE AL GIORNO ---
             let mediaMeseCorrente = spesaMeseCorrente / giornoCurr;
             document.getElementById('mediaMeseCorrente').innerText = formattaEuro(mediaMeseCorrente);
+
+            // --- GESTIONE CIBO MESE CORRENTE E BUDGET 300€ ---
+            let boxCiboMese = document.getElementById('ciboMeseCorrente');
+            boxCiboMese.innerText = formattaEuro(ciboMeseCorrente);
+            
+            // Se supera i 300€ diventa ROSSO
+            if(ciboMeseCorrente > 300) {
+                boxCiboMese.style.color = "#dc3545"; 
+            } else {
+                boxCiboMese.style.color = "#0056b3"; 
+            }
             
             // --- MEDIA CIBO GLOBALE ---
             let mediaCibo = 0;
