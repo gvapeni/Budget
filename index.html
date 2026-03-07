@@ -70,7 +70,6 @@
         
         .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 0; font-size: 15px; }
         .mese-row:last-child { border-bottom: none; }
-        .mese-media { font-size: 12px; color: #888; font-weight: 400; margin-left: 6px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         th, td { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 5px; text-align: left; vertical-align: middle; }
@@ -305,7 +304,7 @@
             }
             document.getElementById('mediaCibo').innerText = formattaEuro(mediaCibo);
 
-            // STAMPA LISTA MESI CON MEDIA GIORNALIERA A FIANCO
+            // STAMPA LISTA MESI CON MEDIA GIORNALIERA A DESTRA CON IL TOTALE
             let htmlMesi = "";
             Object.keys(riepilogoMesi).sort((a, b) => b - a).forEach(chiave => {
                 let meseData = riepilogoMesi[chiave];
@@ -317,11 +316,10 @@
 
                 htmlMesi += `
                     <div class="mese-row">
-                        <div>
-                            <span style="font-weight: 600;">${meseData.nome}</span>
-                            <span class="mese-media">(Media: ${formattaEuro(mediaDelMese)} / gg)</span>
-                        </div>
-                        <span style="font-weight: 700; color: #0056b3;">${formattaEuro(meseData.totale)}</span>
+                        <span style="font-weight: 600;">${meseData.nome}</span>
+                        <span style="font-weight: 700; color: #0056b3;">
+                            ${formattaEuro(mediaDelMese)} &nbsp;|&nbsp; ${formattaEuro(meseData.totale)}
+                        </span>
                     </div>`;
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi || "<div style='color:#b0bec5; text-align:center;'>Nessun dato registrato</div>";
