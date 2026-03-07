@@ -7,14 +7,13 @@
     <meta name="apple-mobile-web-app-title" content="App Spese">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>App Spese Armonizzata</title>
+    <title>App Spese Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
             --primary: #0056b3;
             --secondary: #5a6d82;
-            --accent: #00a8ff;
             --bg: #f8fafd;
             --card-bg: rgba(255, 255, 255, 0.85);
             --border: rgba(0, 86, 179, 0.1);
@@ -24,11 +23,8 @@
         body { 
             font-family: var(--font-main);
             background-color: var(--bg); 
-            margin: 0; 
-            padding: 12px; 
-            color: #1d1d1f; 
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            margin: 0; padding: 12px; color: #1d1d1f; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased;
         }
         
         body::before { 
@@ -38,109 +34,78 @@
             z-index: -1; 
         }
 
-        .app-container { display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 1300px; margin: 0 auto; }
+        /* CONTAINER PRINCIPALE */
+        .app-container { display: flex; flex-direction: column; gap: 15px; max-width: 1300px; margin: 0 auto; }
         
         @media (min-width: 1024px) {
             body { padding: 40px; }
-            .app-container { grid-template-columns: 360px 1fr; gap: 40px; }
+            .app-container { display: grid; grid-template-columns: 360px 1fr; gap: 40px; }
             .sidebar { position: sticky; top: 40px; }
             h1 { text-align: left !important; font-size: 34px !important; }
         }
 
-        h1 { text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 25px; color: #1d1d1f; letter-spacing: -0.02em; }
-        h2 { color: var(--primary); font-size: 16px; font-weight: 700; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; }
+        h1 { text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.02em; }
+        h2 { color: var(--primary); font-size: 16px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; }
 
         .card { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
-            border-radius: 20px; padding: 20px; margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-            box-shadow: 0 12px 35px rgba(0,0,0,0.03); 
+            background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border-radius: 20px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.5); 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.03); margin-bottom: 20px;
         }
 
         label { font-size: 11px; font-weight: 700; color: var(--secondary); display: block; margin-bottom: 6px; text-transform: uppercase; }
-        
         input, select { 
-            font-family: var(--font-main);
-            width: 100%; padding: 12px; background: #fff; 
+            font-family: var(--font-main); width: 100%; padding: 12px; background: #fff; 
             border: 1px solid var(--border); border-radius: 12px; font-size: 16px; 
-            box-sizing: border-box; margin-bottom: 15px; color: #1d1d1f;
+            box-sizing: border-box; margin-bottom: 15px;
         }
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(0,168,255,0.1); }
         
         button { 
-            font-family: var(--font-main);
-            background: var(--primary); 
-            color: white; border: none; padding: 15px; width: 100%; 
-            border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s ease;
+            font-family: var(--font-main); background: var(--primary); color: white; border: none; 
+            padding: 15px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer;
         }
-        button:hover { background: #004494; transform: translateY(-1px); }
 
-        /* DASHBOARD - FIX IPHONE E MAC */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (min-width: 1024px) { .stat-box.full { grid-column: span 2; } }
+        /* DASHBOARD - FIX DEFINITIVO */
+        .stats-grid { display: flex; flex-direction: column; gap: 12px; }
         
+        @media (min-width: 600px) {
+            .stats-grid { display: grid; grid-template-columns: 1fr 1fr; }
+            .stat-box.full { grid-column: span 2; }
+        }
+
         .stat-box { 
             background: rgba(255, 255, 255, 0.5); padding: 16px; border-radius: 16px; 
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            min-height: 90px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; min-height: 90px;
         }
         
-        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; text-align: left; }
-        
-        .stat-value { 
-            font-size: 20px; 
-            font-weight: 800; 
-            color: var(--primary); 
-            letter-spacing: -0.01em; 
-            margin: auto; /* Centra nel box */
-            text-align: center;
-            width: 100%;
-        }
+        .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .stat-value { font-size: 22px; font-weight: 800; color: var(--primary); margin: auto; text-align: center; width: 100%; }
 
-        /* STORICO MESI - ESPANSO A TUTTA LARGHEZZA */
-        .storico-mesi-container { width: 100%; display: block; }
+        /* STORICO MESI - FIX DEFINITIVO */
+        .storico-mesi-container { width: 100%; }
         .mese-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid var(--border); 
-            padding: 14px 0; 
-            width: 100%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border); padding: 14px 0; width: 100%;
         }
         .mese-nome { font-weight: 600; font-size: 15px; color: #3a3a3c; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 15px; white-space: nowrap; }
 
+        /* GRAFICI */
         .grafici-container { display: none; margin-top: 25px; gap: 20px; }
         @media (min-width: 1024px) { .grafici-container { display: grid !important; grid-template-columns: 1fr 1fr; } }
         .chart-box { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid var(--border); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; font-size: 11px; color: var(--secondary); padding: 12px 8px; text-transform: uppercase; font-weight: 700; }
+        /* TABELLA */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; color: var(--secondary); padding: 12px 8px; text-transform: uppercase; }
         td { padding: 14px 8px; border-bottom: 1px solid var(--border); font-size: 14px; }
         .importo-td { font-weight: 700; color: var(--primary); text-align: right; }
-        .cat-badge { font-size: 10px; font-weight: 700; color: var(--secondary); background: #eee; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+        .cat-badge { font-size: 10px; font-weight: 700; color: var(--secondary); background: #eee; padding: 3px 8px; border-radius: 6px; }
         
         .delete-btn { 
-            background: transparent; 
-            color: var(--secondary); 
-            border: none; 
-            padding: 8px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s ease; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.6;
-        }
-        .delete-btn:hover { 
-            background: rgba(0, 86, 179, 0.05); 
-            color: var(--primary);
-            opacity: 1;
+            background: transparent; color: var(--secondary); border: none; padding: 8px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.6;
         }
         .delete-btn svg { width: 18px; height: 18px; fill: currentColor; }
     </style>
@@ -184,7 +149,7 @@
                         <div class="stat-title">Media / Giorno</div>
                         <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
                     </div>
-                    <div class="stat-box full" style="display: block; min-height: auto;">
+                    <div class="stat-box full">
                         <div class="stat-title">Storico per Mese (Totale | Media)</div>
                         <div id="spesaPerMeseLista" class="storico-mesi-container"></div>
                     </div>
@@ -200,7 +165,7 @@
 
             <div class="card">
                 <h2>Storico Operazioni</h2>
-                <div style="overflow-x: auto;">
+                <div class="table-wrapper">
                     <table id="tabellaSpese">
                         <thead>
                             <tr><th>Data</th><th>Descrizione</th><th style="text-align:right;">Euro</th><th></th></tr>
@@ -307,7 +272,6 @@
         function disegnaGrafici() {
             if(chart1) chart1.destroy();
             if(chart2) chart2.destroy();
-
             let catData = {}; let mesiData = {};
             spese.forEach(s => {
                 catData[s.categoria] = (catData[s.categoria] || 0) + s.importo;
@@ -315,19 +279,16 @@
                 const k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
                 mesiData[k] = (mesiData[k] || 0) + s.importo;
             });
-
             const palette = ['#0056b3', '#00a8ff', '#5a6d82', '#a1c4fd', '#708090'];
-
             chart1 = new Chart(document.getElementById('chartCategorie'), {
                 type: 'doughnut',
                 data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: palette, borderWidth: 2, borderColor: '#fff' }] },
-                options: { plugins: { title: { display: true, text: 'CATEGORIE', font: { size: 12, weight: 'bold', family: '-apple-system' } }, legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+                options: { plugins: { title: { display: true, text: 'CATEGORIE' }, legend: { position: 'bottom' } } }
             });
-
             chart2 = new Chart(document.getElementById('chartMesi'), {
                 type: 'bar',
-                data: { labels: Object.keys(mesiData), datasets: [{ label: 'Euro', data: Object.values(mesiData), backgroundColor: '#0056b3', borderRadius: 5 }] },
-                options: { plugins: { title: { display: true, text: 'ULTIMI MESI', font: { size: 12, weight: 'bold', family: '-apple-system' } }, legend: { display: false } }, scales: { y: { grid: { display: false } }, x: { grid: { display: false } } } }
+                data: { labels: Object.keys(mesiData), datasets: [{ label: 'Euro', data: Object.values(mesiData), backgroundColor: '#0056b3' }] },
+                options: { plugins: { title: { display: true, text: 'ULTIMI MESI' }, legend: { display: false } } }
             });
         }
 
