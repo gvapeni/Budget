@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Spese 2026">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>Spese 2026 PRO v3</title>
+    <title>Spese iPhone OK</title>
 
     <style>
         :root {
@@ -25,7 +24,6 @@
             background-color: var(--bg); 
             margin: 0; padding: 12px; color: #1d1d1f; 
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
         }
         
         body::before { 
@@ -35,8 +33,8 @@
             z-index: -1; 
         }
 
-        h1 { text-align: center; font-size: 26px; font-weight: 800; margin: 15px 0 25px 0; letter-spacing: -0.03em; }
-        h2 { color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 15px; letter-spacing: 0.05em; }
+        h1 { text-align: center; font-size: 24px; font-weight: 800; margin: 10px 0 20px 0; }
+        h2 { color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 15px; }
 
         .card { 
             background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
@@ -46,58 +44,47 @@
 
         label { font-size: 10px; font-weight: 700; color: var(--secondary); display: block; margin-bottom: 5px; text-transform: uppercase; }
         
-        /* Prevenzione zoom su iPhone */
         input, select { 
             font-family: var(--font-main); width: 100%; padding: 14px; background: #fff; 
             border: 1px solid var(--border); border-radius: 12px; font-size: 16px; 
             margin-bottom: 12px; box-sizing: border-box; color: #1d1d1f;
-            -webkit-appearance: none;
         }
         
         button { 
             font-family: var(--font-main); background: var(--primary); color: white; border: none; 
             padding: 16px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
-            transition: opacity 0.2s;
         }
-        button:active { opacity: 0.7; }
 
         .stat-box { 
             background: #fff; padding: 16px; border-radius: 16px; border: 1px solid var(--border); 
             margin-bottom: 12px; text-align: center;
         }
         .stat-title { font-size: 10px; color: var(--secondary); font-weight: 700; text-transform: uppercase; text-align: left; margin-bottom: 6px; }
-        .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.02em; }
+        .stat-value { font-size: 26px; font-weight: 800; color: var(--primary); }
 
         .mese-row { 
             display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--border); padding: 14px 0; width: 100%; 
+            border-bottom: 1px solid var(--border); padding: 14px 0; 
         }
-        .mese-nome { font-weight: 600; font-size: 15px; color: #3a3a3c; }
-        .mese-cifre { font-weight: 700; color: var(--primary); font-size: 14px; text-align: right; }
+        .mese-nome { font-weight: 600; font-size: 15px; }
+        .mese-cifre { font-weight: 700; color: var(--primary); font-size: 14px; }
 
-        .table-wrapper { overflow-x: auto; margin-top: 5px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        td { padding: 14px 5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .importo-td { font-weight: 700; color: var(--primary); text-align: right; white-space: nowrap; font-size: 15px; }
+        td { padding: 14px 5px; border-bottom: 1px solid var(--border); }
+        .importo-td { font-weight: 700; color: var(--primary); text-align: right; white-space: nowrap; }
         .cat-badge { font-size: 9px; font-weight: 800; background: #f0f2f5; padding: 3px 7px; border-radius: 6px; color: var(--secondary); text-transform: uppercase; }
-
-        .delete-btn { 
-            background: transparent; color: #c7c7cc; border: none; padding: 8px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        .delete-btn svg { width: 18px; height: 18px; fill: currentColor; }
     </style>
 </head>
 <body>
 
-    <p style="text-align:center; font-size:8px; color:#bbb; margin-bottom:-10px;">Build 3.0 - Sync Check 2026</p>
+    <p style="text-align:center; font-size:8px; color:#bbb;">BUILD IPHONE OK</p>
     <h1>App Spese</h1>
 
     <div class="app-container">
         <div class="card">
             <h2>Nuova Operazione</h2>
             <label>Data</label><input type="date" id="dataSpesa">
-            <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Carburante, Cena...">
+            <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Benzina...">
             <label>Categoria</label>
             <select id="categoriaSpesa">
                 <option value="Cibo">Cibo</option>
@@ -109,37 +96,28 @@
                 <option value="Altro">Altro</option>
             </select>
             <label>Importo (€)</label><input type="number" id="importoSpesa" inputmode="decimal" placeholder="0,00" step="0.01">
-            <button onclick="aggiungiSpesa()">Registra Movimento</button>
+            <button onclick="aggiungiSpesa()">Salva Spesa</button>
         </div>
 
         <div class="card">
-            <h2>Riepilogo</h2>
+            <h2>Dashboard</h2>
             <div class="stat-box">
-                <div class="stat-title">Totale Mese Corrente</div>
+                <div class="stat-title">Spesa Mese</div>
                 <div class="stat-value" id="spesaMeseCorrente">0,00 €</div>
             </div>
             <div class="stat-box">
-                <div class="stat-title">Media Giornaliera</div>
+                <div class="stat-title">Media / Giorno</div>
                 <div class="stat-value" id="mediaMeseCorrente">0,00 €</div>
             </div>
-            <div class="stat-box" style="text-align: left; padding-top: 10px;">
-                <div class="stat-title" style="margin-bottom: 10px;">Storico Mensile (Totale | Media)</div>
+            <div class="stat-box" style="text-align: left;">
+                <div class="stat-title">Storico Mensile (Totale | Media)</div>
                 <div id="spesaPerMeseLista"></div>
             </div>
         </div>
 
         <div class="card">
-            <h2>Importa Dati</h2>
-            <input type="file" id="csvFileInput" accept=".csv">
-        </div>
-
-        <div class="card">
-            <h2>Ultime Spese</h2>
-            <div class="table-wrapper">
-                <table id="tabellaSpese">
-                    <tbody></tbody>
-                </table>
-            </div>
+            <h2>Movimenti</h2>
+            <table id="tabellaSpese"><tbody></tbody></table>
         </div>
     </div>
 
@@ -147,14 +125,10 @@
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
-        // --- FUNZIONE FORMATTAZIONE MANUALE FORZATA ---
         function formattaEuro(n) {
-            let num = parseFloat(n);
-            if (isNaN(num)) num = 0;
+            let num = parseFloat(n) || 0;
             let parts = num.toFixed(2).split(".");
-            // Punto per le migliaia
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            // Unione con virgola per i decimali
             return parts.join(",") + " €";
         }
 
@@ -168,16 +142,7 @@
                 if (isNaN(d.getTime())) return;
                 const chiave = d.getFullYear() + "-" + d.getMonth();
                 if(d.getMonth() === oggi.getMonth() && d.getFullYear() === oggi.getFullYear()) meseCorr += s.importo;
-                
-                if(!riepilogo[chiave]) {
-                    riepilogo[chiave] = { 
-                        totale: 0, 
-                        nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), 
-                        ts: new Date(d.getFullYear(), d.getMonth(), 1).getTime(),
-                        m: d.getMonth(),
-                        a: d.getFullYear()
-                    };
-                }
+                if(!riepilogo[chiave]) riepilogo[chiave] = { totale: 0, nome: nomiMesi[d.getMonth()] + " " + d.getFullYear(), ts: d.getTime(), m: d.getMonth(), a: d.getFullYear() };
                 riepilogo[chiave].totale += s.importo;
             });
 
@@ -187,75 +152,29 @@
             let htmlMesi = "";
             Object.keys(riepilogo).sort((a,b) => riepilogo[b].ts - riepilogo[a].ts).forEach(k => {
                 const item = riepilogo[k];
-                const ggMese = (item.m === oggi.getMonth() && item.a === oggi.getFullYear()) ? oggi.getDate() : new Date(item.a, item.m + 1, 0).getDate();
-                
-                htmlMesi += `<div class="mese-row">
-                    <span class="mese-nome">${item.nome}</span>
-                    <span class="mese-cifre">${formattaEuro(item.totale)} <span style="color:#ccc; font-weight:400; margin:0 3px;">|</span> ${formattaEuro(item.totale/ggMese)}</span>
-                </div>`;
+                const gg = (item.m === oggi.getMonth() && item.a === oggi.getFullYear()) ? oggi.getDate() : new Date(item.a, item.m + 1, 0).getDate();
+                htmlMesi += `<div class="mese-row"><span class="mese-nome">${item.nome}</span><span class="mese-cifre">${formattaEuro(item.totale)} | ${formattaEuro(item.totale/gg)}</span></div>`;
             });
-            document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi || "<p style='color:#999; font-size:12px;'>Nessun dato</p>";
+            document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
 
             document.querySelector('#tabellaSpese tbody').innerHTML = spese.map((s, i) => `
                 <tr>
-                    <td style="color:#8e8e93; font-weight:500; font-size:12px;">${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
-                    <td><span style="font-weight:600;">${s.descrizione}</span><br><span class="cat-badge">${s.categoria}</span></td>
+                    <td style="color:#8e8e93; font-size:12px;">${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
+                    <td><b>${s.descrizione}</b><br><span class="cat-badge">${s.categoria}</span></td>
                     <td class="importo-td">${formattaEuro(s.importo)}</td>
-                    <td style="text-align:right">
-                        <button class="delete-btn" onclick="eliminaSpesa(${i})">
-                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                        </button>
-                    </td>
                 </tr>`).join('');
         }
 
-        document.getElementById('csvFileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const lines = event.target.result.split(/\r?\n/);
-                let count = 0;
-                lines.forEach((line, i) => {
-                    if (i === 0 || !line.trim()) return;
-                    const sep = line.includes(';') ? ';' : ',';
-                    const cols = line.split(sep).map(c => c.trim().replace(/^"|"$/g, ''));
-                    if (cols.length >= 4) {
-                        const dP = cols[0].split('/');
-                        if (dP.length === 3) {
-                            let y = parseInt(dP[2]); if(y < 100) y += 2000;
-                            const d = new Date(y, parseInt(dP[1])-1, parseInt(dP[0]));
-                            const imp = parseFloat(cols[cols.length-1].replace(/[€\s]/g, '').replace(',', '.'));
-                            if(!isNaN(d.getTime()) && !isNaN(imp)) {
-                                spese.push({ data: d.getTime(), descrizione: cols[1], categoria: cols[2] || "Altro", importo: imp });
-                                count++;
-                            }
-                        }
-                    }
-                });
-                spese.sort((a,b) => b.data - a.data);
-                localStorage.setItem('speseData', JSON.stringify(spese));
-                aggiornaUI();
-                alert("Importazione completata: " + count + " righe.");
-            };
-            reader.readAsText(file);
-        });
-
         function aggiungiSpesa() {
-            const dInput = document.getElementById('dataSpesa').value;
-            const desc = document.getElementById('descrizioneSpesa').value;
-            const cat = document.getElementById('categoriaSpesa').value;
-            const imp = parseFloat(document.getElementById('importoSpesa').value);
-            if(!dInput || !desc || isNaN(imp)) return alert("Compila tutti i campi!");
-            spese.push({ data: new Date(dInput).getTime(), descrizione: desc, categoria: cat, importo: imp });
+            const d = document.getElementById('dataSpesa').value, desc = document.getElementById('descrizioneSpesa').value, cat = document.getElementById('categoriaSpesa').value, imp = parseFloat(document.getElementById('importoSpesa').value);
+            if(!d || !desc || isNaN(imp)) return alert("Compila tutto!");
+            spese.push({ data: new Date(d).getTime(), descrizione: desc, categoria: cat, importo: imp });
             spese.sort((a,b) => b.data - a.data);
             localStorage.setItem('speseData', JSON.stringify(spese));
             aggiornaUI();
             document.getElementById('descrizioneSpesa').value = "";
             document.getElementById('importoSpesa').value = "";
         }
-
-        function eliminaSpesa(i) { if(confirm("Cancellare questa spesa?")) { spese.splice(i,1); localStorage.setItem('speseData', JSON.stringify(spese)); aggiornaUI(); } }
 
         window.onload = () => { document.getElementById('dataSpesa').valueAsDate = new Date(); aggiornaUI(); };
     </script>
