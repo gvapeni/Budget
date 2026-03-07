@@ -57,13 +57,16 @@
         
         .btn-grafici { background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3); margin-top: 10px; }
         
-        /* DASHBOARD GRID */
+        /* DASHBOARD GRID E ALLINEAMENTO */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .stat-box { 
             background: rgba(255, 255, 255, 0.5); padding: 15px; border-radius: 12px; text-align: center; 
             border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
+            display: flex; flex-direction: column; /* Rende il box elastico */
         }
-        .stat-box.full { grid-column: span 2; }
+        .stat-content { margin-top: auto; } /* Spinge il numero perfettamente in basso */
+        .stat-box.full { grid-column: span 2; display: block; }
+        
         .stat-title { font-size: 11px; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 700; color: #0056b3; margin-top: 5px; }
         .stat-value.big { font-size: 24px; }
@@ -103,11 +106,15 @@
             
             <div class="stat-box">
                 <div class="stat-title">Mese Corrente</div>
-                <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
+                <div class="stat-content">
+                    <div class="stat-value big" id="spesaMeseCorrente">0,00 €</div>
+                </div>
             </div>
             <div class="stat-box">
                 <div class="stat-title">Media Mese / Giorno</div>
-                <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
+                <div class="stat-content">
+                    <div class="stat-value big" id="mediaMeseCorrente">0,00 €</div>
+                </div>
             </div>
 
             <div style="grid-column: span 2; text-align: center; margin-top: 8px; margin-bottom: 2px; font-weight: 700; color: #0056b3; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
@@ -116,13 +123,17 @@
             
             <div class="stat-box">
                 <div class="stat-title">Cibo Mese Corrente</div>
-                <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
-                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">Budget: <b>300,00 €</b></div>
+                <div class="stat-content">
+                    <div class="stat-value big" id="ciboMeseCorrente">0,00 €</div>
+                    <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">Budget: <b>300,00 €</b></div>
+                </div>
             </div>
             <div class="stat-box">
                 <div class="stat-title">Media Cibo Globale</div>
-                <div class="stat-value big" id="mediaCibo">0,00 €</div>
-                <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">Al giorno</div>
+                <div class="stat-content">
+                    <div class="stat-value big" id="mediaCibo">0,00 €</div>
+                    <div style="font-size: 11px; color: #555; margin-top: 6px; font-weight: 500;">Al giorno</div>
+                </div>
             </div>
             
             <div class="stat-box full" style="margin-top: 5px;">
@@ -196,12 +207,11 @@
             return d.getDate().toString().padStart(2,'0') + "/" + (d.getMonth()+1).toString().padStart(2,'0') + "/" + d.getFullYear().toString().substring(2); 
         }
 
-        // NUOVA FUNZIONE BLINDATA PER I PUNTI DELLE MIGLIAIA
         function formattaEuro(numero) {
-            let numPunto = parseFloat(numero).toFixed(2); // Trasforma es. 1250 in "1250.00"
-            let parti = numPunto.split('.'); // Divide "1250" da "00"
-            parti[0] = parti[0].replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Aggiunge il punto a "1250" -> "1.250"
-            return parti[0] + "," + parti[1] + " €"; // Unisce tutto -> "1.250,00 €"
+            let numPunto = parseFloat(numero).toFixed(2); 
+            let parti = numPunto.split('.'); 
+            parti[0] = parti[0].replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+            return parti[0] + "," + parti[1] + " €"; 
         }
         
         function salvaDati() { 
