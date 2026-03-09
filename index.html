@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-title" content="Spese 2026">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
-    <title>Spese App 2026</title>
+    <title>Spese App Pro 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -52,10 +52,8 @@
             font-family: var(--font-main); background: var(--primary); color: white; border: none; 
             padding: 16px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
         }
-        
-        button.btn-secondary {
-            background: var(--secondary); margin-top: 15px;
-        }
+        button.btn-secondary { background: var(--secondary); margin-top: 10px; font-size: 14px; padding: 12px;}
+        button.btn-export { background: #28a745; margin-top: 15px; } /* Verde per export */
 
         .stat-box { 
             background: #fff; padding: 16px; border-radius: 16px; border: 1px solid var(--border); 
@@ -68,20 +66,15 @@
         .mese-nome { font-weight: 600; font-size: 15px; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 13px; }
 
-        /* Stile Grafici */
         .grafici-container { display: none; flex-direction: column; gap: 15px; margin-top: 20px; }
         .chart-box { background: #fff; padding: 15px; border-radius: 14px; border: 1px solid var(--border); }
 
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        td { padding: 14px 5px; border-bottom: 1px solid var(--border); }
-        .importo-td { font-weight: 700; color: var(--primary); text-align: right; }
+        td { padding: 14px 5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .importo-td { font-weight: 700; color: var(--primary); text-align: right; white-space: nowrap; }
         .cat-badge { font-size: 9px; font-weight: 800; background: #f0f2f5; padding: 3px 7px; border-radius: 6px; color: var(--secondary); text-transform: uppercase; }
         
-        /* Stile Cestino */
-        .delete-btn { 
-            background: transparent; color: var(--secondary); border: none; padding: 6px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.5; width: auto;
-        }
+        .delete-btn { background: transparent; color: var(--secondary); border: none; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.6; width: auto; }
         .delete-btn svg { width: 18px; height: 18px; fill: currentColor; }
     </style>
 </head>
@@ -93,7 +86,7 @@
         <div class="card">
             <h2>Nuova Spesa</h2>
             <label>Data</label><input type="date" id="dataSpesa">
-            <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Benzina...">
+            <label>Descrizione</label><input type="text" id="descrizioneSpesa" placeholder="Es. Supermercato, Benzina...">
             <label>Categoria</label>
             <select id="categoriaSpesa">
                 <option value="Cibo">Cibo</option>
@@ -132,8 +125,10 @@
         </div>
 
         <div class="card">
-            <h2>📥 Importa CSV</h2>
-            <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px; margin-bottom: 0;">
+            <h2>Gestione Dati</h2>
+            <label>📥 Importa da CSV (Sostituisce i dati esistenti)</label>
+            <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px;">
+            <button class="btn-export" onclick="esportaCSV()">📤 Esporta Storico (CSV)</button>
         </div>
 
         <div class="card">
@@ -151,11 +146,10 @@
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         let chart1, chart2;
 
-        // --- FORMATTAZIONE FORZATA CON PUNTO MIGLIAIA ---
+        // Formattazione Punti Migliaia Forza Bruta
         function formattaEuro(n) {
             let num = parseFloat(n) || 0;
             let parts = num.toFixed(2).split(".");
-            // Inserisce il punto ogni 3 cifre
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             return parts.join(",") + " €";
         }
@@ -185,7 +179,6 @@
             });
             document.getElementById('spesaPerMeseLista').innerHTML = htmlMesi;
 
-            // Rigenerazione Tabella con il pulsante Cestino
             document.querySelector('#tabellaSpese tbody').innerHTML = spese.map((s, i) => `
                 <tr>
                     <td style="color:#8e8e93; font-size:12px;">${new Date(s.data).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit'})}</td>
@@ -198,13 +191,12 @@
                     </td>
                 </tr>`).join('');
                 
-            // Aggiorna i grafici se sono visibili
             if (document.getElementById('graficiContainer').style.display === 'flex') {
                 disegnaGrafici();
             }
         }
 
-        // --- GESTIONE GRAFICI ---
+        // --- GRAFICI OTTIMIZZATI PER IPHONE ---
         function toggleGrafici() {
             const g = document.getElementById('graficiContainer');
             const b = document.getElementById('btnToggleGrafici');
@@ -214,7 +206,8 @@
             } else {
                 g.style.display = 'flex';
                 b.innerText = '🔼 Nascondi Analisi';
-                disegnaGrafici();
+                // Ritardiamo il disegno di 50 millisecondi per dare tempo all'iPhone di mostrare il box, evitando glitch
+                setTimeout(disegnaGrafici, 50); 
             }
         }
 
@@ -226,9 +219,8 @@
             let mesiSum = {};
             
             spese.forEach(s => {
-                // Raggruppa PER CATEGORIA (Cibo, Trasporti, ecc.)
                 let c = s.categoria || "Altro";
-                catSum[c] = (catSum[c] || 0) + s.importo;
+                catSum[c] = (catSum[c] || 0) + s.importo; // Raggruppa per Categoria
                 
                 let d = new Date(s.data);
                 let k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
@@ -240,17 +232,42 @@
             chart1 = new Chart(document.getElementById('chartCategorie'), {
                 type: 'doughnut',
                 data: { labels: Object.keys(catSum), datasets: [{ data: Object.values(catSum), backgroundColor: palette, borderWidth: 2, borderColor: '#fff' }] },
-                options: { plugins: { title: { display: true, text: 'SPESE PER CATEGORIA', font: {size: 13} }, legend: { position: 'bottom' } } }
+                options: { plugins: { title: { display: true, text: 'SPESE PER CATEGORIA', font: {size: 13} }, legend: { position: 'bottom' } }, responsive: true }
             });
 
             chart2 = new Chart(document.getElementById('chartMesi'), {
                 type: 'bar',
                 data: { labels: Object.keys(mesiSum).reverse(), datasets: [{ label: 'Euro', data: Object.values(mesiSum).reverse(), backgroundColor: '#0056b3', borderRadius: 4 }] },
-                options: { plugins: { title: { display: true, text: 'ANDAMENTO MENSILE', font: {size: 13} }, legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                options: { plugins: { title: { display: true, text: 'ANDAMENTO MENSILE', font: {size: 13} }, legend: { display: false } }, responsive: true, scales: { y: { beginAtZero: true } } }
             });
         }
 
-        // --- GESTIONE IMPORTAZIONE CSV ---
+        // --- NUOVA FUNZIONE: ESPORTA CSV ---
+        function esportaCSV() {
+            if (spese.length === 0) return alert("Non ci sono spese da esportare!");
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Data;Descrizione;Categoria;Importo\n"; // Intestazioni
+            
+            spese.forEach(s => {
+                let d = new Date(s.data);
+                let stringaData = d.getDate().toString().padStart(2, '0') + "/" + (d.getMonth() + 1).toString().padStart(2, '0') + "/" + d.getFullYear();
+                let desc = s.descrizione.replace(/;/g, ","); // Evita che i punti e virgola rompano il file
+                let imp = s.importo.toString().replace(".", ","); // Formato decimale italiano
+                
+                csvContent += `${stringaData};${desc};${s.categoria};${imp}\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Storico_Spese.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- IMPORTAZIONE ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -283,10 +300,9 @@
             reader.readAsText(file);
         });
 
-        // --- INSERIMENTO ED ELIMINAZIONE SPESE ---
         function aggiungiSpesa() {
             const d = document.getElementById('dataSpesa').value, desc = document.getElementById('descrizioneSpesa').value, cat = document.getElementById('categoriaSpesa').value, imp = parseFloat(document.getElementById('importoSpesa').value);
-            if(!d || !desc || isNaN(imp)) return alert("Compila tutti i campi richiesti!");
+            if(!d || !desc || isNaN(imp)) return alert("Compila tutti i campi!");
             spese.push({ data: new Date(d).getTime(), descrizione: desc, categoria: cat, importo: imp });
             spese.sort((a,b) => b.data - a.data);
             localStorage.setItem('speseData', JSON.stringify(spese));
@@ -296,7 +312,7 @@
         }
 
         function eliminaSpesa(i) { 
-            if(confirm("Vuoi davvero eliminare questa spesa?")) { 
+            if(confirm("Vuoi eliminare questa spesa?")) { 
                 spese.splice(i,1); 
                 localStorage.setItem('speseData', JSON.stringify(spese)); 
                 aggiornaUI(); 
