@@ -8,7 +8,6 @@
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/wallet.png">
     
     <title>Spese App Pro 2026</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -52,8 +51,7 @@
             font-family: var(--font-main); background: var(--primary); color: white; border: none; 
             padding: 16px; width: 100%; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
         }
-        button.btn-secondary { background: var(--secondary); margin-top: 10px; font-size: 14px; padding: 12px;}
-        button.btn-export { background: #28a745; margin-top: 15px; } /* Verde per export */
+        button.btn-export { background: #28a745; margin-top: 15px; } 
 
         .stat-box { 
             background: #fff; padding: 16px; border-radius: 16px; border: 1px solid var(--border); 
@@ -65,9 +63,6 @@
         .mese-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 14px 0; }
         .mese-nome { font-weight: 600; font-size: 15px; }
         .mese-cifre { font-weight: 700; color: var(--primary); font-size: 13px; }
-
-        .grafici-container { display: none; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .chart-box { background: #fff; padding: 15px; border-radius: 14px; border: 1px solid var(--border); }
 
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         td { padding: 14px 5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -115,18 +110,11 @@
                 <div class="stat-title">Storico Mensile (Totale | Media)</div>
                 <div id="spesaPerMeseLista"></div>
             </div>
-
-            <button id="btnToggleGrafici" class="btn-secondary" onclick="toggleGrafici()">📊 Mostra Analisi Grafiche</button>
-            
-            <div class="grafici-container" id="graficiContainer">
-                <div class="chart-box"><canvas id="chartCategorie"></canvas></div>
-                <div class="chart-box"><canvas id="chartMesi"></canvas></div>
-            </div>
         </div>
 
         <div class="card">
             <h2>Gestione Dati</h2>
-            <label>📥 Importa da CSV (Sostituisce i dati esistenti)</label>
+            <label>📥 Importa da CSV</label>
             <input type="file" id="csvFileInput" accept=".csv" style="font-size: 12px;">
             <button class="btn-export" onclick="esportaCSV()">📤 Esporta Storico (CSV)</button>
         </div>
@@ -144,9 +132,7 @@
     <script>
         let spese = JSON.parse(localStorage.getItem('speseData')) || [];
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        let chart1, chart2;
 
-        // Formattazione Punti Migliaia Forza Bruta
         function formattaEuro(n) {
             let num = parseFloat(n) || 0;
             let parts = num.toFixed(2).split(".");
@@ -190,70 +176,19 @@
                         </button>
                     </td>
                 </tr>`).join('');
-                
-            if (document.getElementById('graficiContainer').style.display === 'flex') {
-                disegnaGrafici();
-            }
         }
 
-        // --- GRAFICI OTTIMIZZATI PER IPHONE ---
-        function toggleGrafici() {
-            const g = document.getElementById('graficiContainer');
-            const b = document.getElementById('btnToggleGrafici');
-            if (g.style.display === 'flex') {
-                g.style.display = 'none';
-                b.innerText = '📊 Mostra Analisi Grafiche';
-            } else {
-                g.style.display = 'flex';
-                b.innerText = '🔼 Nascondi Analisi';
-                // Ritardiamo il disegno di 50 millisecondi per dare tempo all'iPhone di mostrare il box, evitando glitch
-                setTimeout(disegnaGrafici, 50); 
-            }
-        }
-
-        function disegnaGrafici() {
-            if(chart1) chart1.destroy();
-            if(chart2) chart2.destroy();
-            
-            let catSum = {}; 
-            let mesiSum = {};
-            
-            spese.forEach(s => {
-                let c = s.categoria || "Altro";
-                catSum[c] = (catSum[c] || 0) + s.importo; // Raggruppa per Categoria
-                
-                let d = new Date(s.data);
-                let k = nomiMesi[d.getMonth()] + " " + d.getFullYear();
-                mesiSum[k] = (mesiSum[k] || 0) + s.importo;
-            });
-
-            const palette = ['#0056b3', '#00a8ff', '#5a6d82', '#a1c4fd', '#708090', '#c2e9fb'];
-
-            chart1 = new Chart(document.getElementById('chartCategorie'), {
-                type: 'doughnut',
-                data: { labels: Object.keys(catSum), datasets: [{ data: Object.values(catSum), backgroundColor: palette, borderWidth: 2, borderColor: '#fff' }] },
-                options: { plugins: { title: { display: true, text: 'SPESE PER CATEGORIA', font: {size: 13} }, legend: { position: 'bottom' } }, responsive: true }
-            });
-
-            chart2 = new Chart(document.getElementById('chartMesi'), {
-                type: 'bar',
-                data: { labels: Object.keys(mesiSum).reverse(), datasets: [{ label: 'Euro', data: Object.values(mesiSum).reverse(), backgroundColor: '#0056b3', borderRadius: 4 }] },
-                options: { plugins: { title: { display: true, text: 'ANDAMENTO MENSILE', font: {size: 13} }, legend: { display: false } }, responsive: true, scales: { y: { beginAtZero: true } } }
-            });
-        }
-
-        // --- NUOVA FUNZIONE: ESPORTA CSV ---
         function esportaCSV() {
             if (spese.length === 0) return alert("Non ci sono spese da esportare!");
             
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Data;Descrizione;Categoria;Importo\n"; // Intestazioni
+            csvContent += "Data;Descrizione;Categoria;Importo\n"; 
             
             spese.forEach(s => {
                 let d = new Date(s.data);
                 let stringaData = d.getDate().toString().padStart(2, '0') + "/" + (d.getMonth() + 1).toString().padStart(2, '0') + "/" + d.getFullYear();
-                let desc = s.descrizione.replace(/;/g, ","); // Evita che i punti e virgola rompano il file
-                let imp = s.importo.toString().replace(".", ","); // Formato decimale italiano
+                let desc = s.descrizione.replace(/;/g, ","); 
+                let imp = s.importo.toString().replace(".", ","); 
                 
                 csvContent += `${stringaData};${desc};${s.categoria};${imp}\n`;
             });
@@ -267,7 +202,6 @@
             document.body.removeChild(link);
         }
 
-        // --- IMPORTAZIONE ---
         document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
